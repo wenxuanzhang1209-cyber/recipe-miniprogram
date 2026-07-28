@@ -54,6 +54,11 @@ const config = {
     maxLimit: 100
   },
 
+  rateLimit: {
+    windowMs: 60 * 1000,
+    max: parseInt(process.env.RATE_LIMIT_MAX, 10) || 300  // 每IP每分钟最大请求数
+  },
+
   cache: {
     defaultTTL: 3600,       // 1 hour
     recipesTTL: 1800,       // 30 minutes

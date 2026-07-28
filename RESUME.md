@@ -1,8 +1,9 @@
 # RESUME — 长任务恢复指南
 
 ## 当前状态
-- **Batch 3 已完成**，测试 62/62 通过（41原有 + 8推荐 + 13安全）
+- **全部 4 个批次已完成**，测试 62/62 通过
 - 最后更新: 2026-07-28
+- 剩余为外部依赖项（真实AppID/HTTPS域名/真实图片）和 Docker 实际构建验证
 
 ## 下一条可直接执行的命令
 
@@ -66,7 +67,33 @@ cd "/Users/wenxuanzhang/Desktop/Vibe Coding/recipe-miniprogram/server" && DB_DIA
 3. 性能基线: 启动时间、各接口p50/p95/p99
 4. 最终交付物清单核对 + 上线检查清单 + 发布说明
 
-## 关键架构决策（Batch3新增）
+## Batch 4 已完成事项
+| 模块 | 状态 | 文件 |
+|------|------|------|
+| Redis快速降级 | ✅ | config/redis.js (enableOfflineQueue=false), 热门接口1s→2ms |
+| 限流可配置 | ✅ | config/index.js rateLimit + app.js, RATE_LIMIT_MAX |
+| Docker加固 | ✅配置 | Dockerfile(非root+HEALTHCHECK) + .dockerignore(排除密钥) ⚠️daemon未运行未实际构建 |
+| 性能测试 | ✅ | scripts/perf-test.js + data/perf-report.json |
+| 上线检查清单 | ✅ | docs/LAUNCH_CHECKLIST.md |
+
+## 性能基线（开发机SQLite无Redis）
+- 热门1.9ms/推荐3.8ms/列表3.1ms/搜索43.5ms/详情258ms/分类1.2ms (p50)
+- 稳定性: 60s 7130请求 100%成功 平均125.7RPS 无衰减
+
+## 全部批次总览
+| 批次 | 内容 | 状态 |
+|------|------|------|
+| Batch1 | TabBar图标/偏好页/注册天数/设计系统 | ✅ |
+| Batch2 | 推荐个性化/搜索增强/详情换算/做菜模式 | ✅ |
+| Batch3 | 数据审计/图片策略/环境校验/安全测试 | ✅ |
+| Batch4 | Redis降级/限流/Docker加固/性能基线/上线清单 | ✅ |
+
+## 关键架构决策（Batch4新增）
+- Redis降级: enableOfflineQueue=false+maxRetriesPerRequest=1, 断线命令立即失败穿透DB, 后台重连恢复后缓存自动生效
+- 限流: 可配置RATE_LIMIT_MAX, 生产300/min/IP
+- Docker: 非root(appuser)+HEALTHCHECK+.dockerignore排除.env, 但daemon未运行未实际验证
+
+## 关键架构决策（Batch3）
 - 图片: 菜系确定性本地占位图(非真实照片), 前端binderror兜底, 上线前按IMAGE_SOURCES.md替换
 - 环境校验: 生产环境弱JWT密钥/占位AppID拒绝启动, 错误只提示变量名不输出密钥值
 - 数据审计: 只读脚本不修改数据, 修复需基于报告另行处理并保留备份

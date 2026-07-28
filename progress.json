@@ -1,10 +1,10 @@
 {
   "project": "recipe-miniprogram",
   "taskType": "24h-deep-development",
-  "lastUpdated": "2026-07-28T16:35:00+08:00",
-  "currentBatch": 3,
+  "lastUpdated": "2026-07-28T17:00:00+08:00",
+  "currentBatch": 4,
   "batchStatus": "complete",
-  "gitCommit": "pending-batch3",
+  "gitCommit": "pending-batch4",
   "completedModules": [
     "env-fix: npm依赖安装(路径空格问题通过/tmp编译绕过)",
     "tabbar-icons: 8个TabBar PNG图标+logo+默认头像+空状态插画+分享卡片图(纯Node生成)",
@@ -19,7 +19,12 @@
     "data-audit: 数据质量审计脚本(14类检查)+quality-report.json(10000道菜,仅图片占位+769计数异常)",
     "image-strategy: 13张菜系确定性本地占位图替换picsum(10000条)+前端binderror兜底+IMAGE_SOURCES.md清单",
     "env-validate: 生产环境启动校验(弱JWT密钥/占位AppID拒绝启动,密钥不入日志)",
-    "security-tests: 权限隔离/收藏幂等并发/SQL注入/Redis降级 13个安全测试"
+    "security-tests: 权限隔离/收藏幂等并发/SQL注入/Redis降级 13个安全测试",
+    "redis-fast-degrade: Redis断线快速降级(enableOfflineQueue=false),热门接口1s→2ms",
+    "rate-limit-config: 限流阈值可配置(RATE_LIMIT_MAX),生产默认300/min",
+    "docker-hardening: Dockerfile非root+HEALTHCHECK+.dockerignore排除密钥(Docker daemon未运行,未实际构建验证)",
+    "perf-baseline: 性能测试脚本+报告(p50/p95/p99+60s稳定性7130请求100%成功)",
+    "launch-checklist: docs/LAUNCH_CHECKLIST.md上线检查清单+性能基线+已知限制"
   ],
   "testCount": 62,
   "testStatus": "62/62 passed",
@@ -29,12 +34,23 @@
     "cd client && node scripts/generate-icons.js"
   ],
   "performanceBaseline": {
-    "note": "Batch3建立完整性能基线",
-    "testSuiteTime": "12.5s"
+    "source": "server/data/perf-report.json",
+    "note": "开发机SQLite+无Redis降级, 生产需另行压测",
+    "health_p50": "0.4ms",
+    "popular_p50": "1.9ms",
+    "recommend_p50": "3.8ms",
+    "list_p50": "3.1ms",
+    "search_p50": "43.5ms",
+    "detail_p50": "258ms",
+    "category_p50": "1.2ms",
+    "related_p50": "6.6ms",
+    "stability": "60s/7130请求/100%成功/平均125.7RPS/无衰减",
+    "testSuiteTime": "~20s"
   },
   "blockers": [
     "npm cache权限问题(需sudo chown -R 501:20 ~/.npm, 已用--cache /tmp/npm-cache-tmp绕过)",
-    "项目路径含空格导致node-gyp编译失败(已用/tmp/server-build编译后移回node_modules)"
+    "项目路径含空格导致node-gyp编译失败(已用/tmp/server-build编译后移回node_modules)",
+    "Docker daemon未运行: Dockerfile/compose已配置但无法实际构建验证(明确标记未验证)"
   ],
   "launchBlockers": [
     "真实微信AppID/AppSecret未配置(.env中为占位值)",
@@ -42,6 +58,6 @@
     "JWT_SECRET为开发弱密钥(生产需替换)",
     "菜谱图片为菜系占位图(非真实菜品照片,上线前需按docs/IMAGE_SOURCES.md替换为合法真实图片)"
   ],
-  "nextTask": "Batch4: 部署验证(Docker构建/健康检查)+稳定性测试+最终交付物清单",
+  "nextTask": "全部4个批次完成。剩余为外部依赖项(真实AppID/HTTPS域名/真实图片)和Docker实际构建验证",
   "nextCommand": "cd server && DB_DIALECT=sqlite npx jest --forceExit"
 }
