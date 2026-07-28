@@ -1,0 +1,99 @@
+{
+  "releaseVersion": "v1.0.0-rc.1",
+  "releaseType": "release-candidate",
+  "frozenAt": "2026-07-28T17:10:00+08:00",
+  "gitCommit": "ed13d3a9eb19a511bce5d71b4269ceff99418a0a",
+  "gitTag": "v1.0.0-rc.1",
+  "components": {
+    "miniprogram": {
+      "version": "1.0.0",
+      "path": "client/",
+      "pages": 10,
+      "tabBarTabs": 4,
+      "baseLibrary": "3.0.0",
+      "appid": "touristappid (占位，上线需替换真实AppID)"
+    },
+    "backend": {
+      "version": "1.0.0",
+      "path": "server/",
+      "runtime": "Node.js 20",
+      "framework": "Express 4",
+      "orm": "Sequelize 6"
+    },
+    "database": {
+      "schemaVersion": "20240722000001-init-schema",
+      "migrationFile": "server/migrations/20240722000001-init-schema.js",
+      "tables": 12,
+      "devDialect": "SQLite",
+      "prodDialect": "MySQL 8.0"
+    },
+    "recipeData": {
+      "version": "20260722-generated",
+      "count": 10000,
+      "sqliteFile": "server/data/recipe.sqlite",
+      "sqliteSizeBytes": 34009088,
+      "imageStrategy": "菜系确定性本地占位图(13张)+前端兜底",
+      "imageChangeLog": "server/data/image-change-log.json",
+      "qualityReport": "server/data/quality-report.json"
+    },
+    "recommendationRules": {
+      "version": "v2-personalized",
+      "features": [
+        "忌口食材硬性排除",
+        "过敏原硬性排除",
+        "荤素偏好排除(素食/纯素)",
+        "菜系偏好优先(显式>浏览历史推断)",
+        "难度约束",
+        "制作时长约束",
+        "饮食目标排序(低脂/快手/高蛋白)",
+        "推荐理由生成",
+        "已浏览排除",
+        "不足时放宽回填"
+      ]
+    },
+    "api": {
+      "version": "v1",
+      "basePath": "/api/v1",
+      "endpointCount": 19,
+      "swagger": "/api-docs"
+    },
+    "designSystem": {
+      "version": "v1",
+      "tokens": "client/styles/tokens.wxss",
+      "base": "client/styles/base.wxss",
+      "theme": "暖橙 #FF6B35"
+    },
+    "brandAssets": {
+      "version": "v1",
+      "tabbarIcons": 8,
+      "brandImages": 4,
+      "recipePlaceholders": 14,
+      "generator": "client/scripts/generate-icons.js + client/scripts/lib/pnglib.js"
+    }
+  },
+  "environmentVariables": {
+    "template": "server/.env.example",
+    "required": ["PORT", "NODE_ENV", "DB_HOST", "DB_PORT", "DB_NAME", "DB_USER", "DB_PASSWORD", "REDIS_HOST", "REDIS_PORT", "JWT_SECRET", "JWT_EXPIRES_IN", "WX_APPID", "WX_SECRET"],
+    "optional": ["REDIS_PASSWORD", "STORAGE_TYPE", "RATE_LIMIT_MAX", "DB_DIALECT", "DB_STORAGE"]
+  },
+  "build": {
+    "builtAt": "2026-07-28T17:10:00+08:00",
+    "nodeVersion": "20.x",
+    "dockerVerified": false,
+    "dockerNote": "Docker daemon未运行，Dockerfile/compose已配置但未实际构建"
+  },
+  "tests": {
+    "total": 62,
+    "passed": 62,
+    "failed": 0,
+    "suites": 5,
+    "coverageStmts": "83%",
+    "command": "cd server && DB_DIALECT=sqlite npx jest --forceExit"
+  },
+  "performance": {
+    "report": "server/data/perf-report.json",
+    "stability": "60s/7130请求/100%成功/平均125.7RPS/无衰减"
+  },
+  "launchBlockers": "上线阻塞项清单.md",
+  "nextRc": "修复验收缺陷后发布 rc.2"
+}

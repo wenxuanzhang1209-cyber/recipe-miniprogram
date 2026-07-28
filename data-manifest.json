@@ -1,0 +1,57 @@
+{
+  "dataVersion": "20260722-generated",
+  "frozenAt": "2026-07-28T17:10:00+08:00",
+  "releaseVersion": "v1.0.0-rc.1",
+  "source": {
+    "generator": "server/scripts/generate-recipes.js",
+    "generationDate": "2026-07-22",
+    "method": "基于真实中餐烹饪规律组合生成(70+主料×12烹饪方式×9菜系×10口味)"
+  },
+  "statistics": {
+    "recipes": 10000,
+    "ingredients": "约300种",
+    "recipeIngredientRelations": 96908,
+    "recipeSteps": 66609,
+    "categories": "菜系/口味/做法/餐次 四维",
+    "sqliteFileBytes": 34009088
+  },
+  "qualityAudit": {
+    "report": "server/data/quality-report.json",
+    "auditedAt": "2026-07-28",
+    "checks": 14,
+    "results": {
+      "duplicateName": 0,
+      "emptyField": 0,
+      "missingSteps": 0,
+      "stepOrderError": 0,
+      "duplicateIngredient": 0,
+      "abnormalAmount": 0,
+      "abnormalTime": 0,
+      "abnormalDifficulty": 0,
+      "overlongField": 0,
+      "htmlContent": 0,
+      "unbelievableNutrition": 0,
+      "abnormalCount": 769,
+      "placeholderImage": 0,
+      "missingImage": 0
+    },
+    "notes": "769条收藏数>浏览数为生成数据特征(轻微)；图片已全部替换为本地菜系占位图"
+  },
+  "imageManifest": {
+    "strategy": "菜系确定性本地占位图(非真实菜品照片)",
+    "changeLog": "server/data/image-change-log.json",
+    "backup": "server/data/recipe.sqlite.bak-*",
+    "sourceDoc": "docs/IMAGE_SOURCES.md",
+    "totalUpdated": 10000,
+    "remainingPicsum": 0,
+    "license": "项目自有(脚本程序化生成,无外部版权依赖)",
+    "launchRequirement": "上线前必须替换为合法真实菜品照片"
+  },
+  "nutritionDisclaimer": "营养数据基于每100克食材营养估算，非精确检测值。前端按'估算'展示，不得作为医疗或精确营养依据。",
+  "integrity": {
+    "sqliteSha256": "见部署时 sha256sum server/data/recipe.sqlite",
+    "recordCounts": {
+      "recipes": 10000
+    }
+  }
+}
