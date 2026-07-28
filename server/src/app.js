@@ -51,6 +51,9 @@ app.use(errorHandler);
 
 // ---------- 启动 ----------
 const start = async () => {
+  // 生产环境配置必填校验（弱密钥/占位值拒绝启动）
+  config.validateEnv();
+
   const { sequelize } = require('./models');
   try {
     await sequelize.authenticate();

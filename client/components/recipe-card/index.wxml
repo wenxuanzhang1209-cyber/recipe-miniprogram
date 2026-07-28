@@ -9,7 +9,7 @@
 </wxs>
 <view class="rc {{mode === 'list' ? 'rc-list' : 'rc-grid'}} fade-in" bindtap="onTap" hover-class="rc-hover">
   <view class="rc-img-wrap">
-    <image class="rc-img" src="{{recipe.cover_image}}" mode="aspectFill" lazy-load="{{true}}" />
+    <image class="rc-img" src="{{imgSrc}}" mode="aspectFill" lazy-load="{{true}}" binderror="onImgError" />
     <view class="rc-time-badge" wx:if="{{recipe.prep_time || recipe.cook_time}}">
       ⏱ {{recipe.prep_time + recipe.cook_time}}分钟
     </view>

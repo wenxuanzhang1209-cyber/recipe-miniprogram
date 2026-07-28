@@ -1,6 +1,6 @@
 require('dotenv').config();
 
-module.exports = {
+const config = {
   port: process.env.PORT || 3000,
   env: process.env.NODE_ENV || 'development',
 
@@ -61,3 +61,47 @@ module.exports = {
     popularTTL: 900         // 15 minutes
   }
 };
+
+/**
+ * 生产环境启动前必填校验。
+ * 原则：
+ *  - 缺少真实配置时快速失败，不带着弱密钥/占位值上线
+ *  - 错误信息只提示变量名，不输出密钥实际值（防日志泄露）
+ *  - 开发/测试环境允许使用默认值（但会告警）
+ * 强密钥生成: node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"
+ */
+const validateEnv = () => {
+  const isProd = config.env === 'production';
+  const errors = [];
+  const warnings = [];
+
+  const WEAK_SECRETS = ['default-secret-change-me', 'recipe-miniprogram-dev-secret-2024', 'change-me-in-production', ''];
+  if (WEAK_SECRETS.includes(config.jwt.secret)) {
+    if (isProd) errors.push('JWT_SECRET 为弱密钥/占位值，生产环境必须替换为强随机密钥');
+    else warnings.push('JWT_SECRET 使用开发默认值（仅允许非生产环境）');
+  } else if (isProd && config.jwt.secret.length < 32) {
+    errors.push('JWT_SECRET 长度不足 32 字符，生产环境需使用强密钥');
+  }
+
+  if (isProd) {
+    if (!config.wechat.appId || config.wechat.appId.includes('placeholder')) {
+      errors.push('WX_APPID 未配置或为占位值');
+    }
+    if (!config.wechat.secret || config.wechat.secret.includes('placeholder')) {
+      errors.push('WX_SECRET 未配置或为占位值');
+    }
+    if (config.db.password === 'root123456') {
+      warnings.push('DB_PASSWORD 为默认值，建议使用独立强密码');
+    }
+  }
+
+  warnings.forEach((w) => console.warn(`[config] ⚠️  ${w}`));
+  if (errors.length) {
+    errors.forEach((e) => console.error(`[config] ❌ ${e}`));
+    console.error('[config] 生产环境配置校验未通过，拒绝启动。请检查 .env（参考 .env.example）');
+    process.exit(1);
+  }
+};
+
+module.exports = config;
+module.exports.validateEnv = validateEnv;

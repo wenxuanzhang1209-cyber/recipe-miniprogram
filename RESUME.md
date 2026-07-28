@@ -1,7 +1,7 @@
 # RESUME — 长任务恢复指南
 
 ## 当前状态
-- **Batch 2 已完成**，测试 49/49 通过（41原有 + 8推荐联动）
+- **Batch 3 已完成**，测试 62/62 通过（41原有 + 8推荐 + 13安全）
 - 最后更新: 2026-07-28
 
 ## 下一条可直接执行的命令
@@ -45,11 +45,31 @@ cd "/Users/wenxuanzhang/Desktop/Vibe Coding/recipe-miniprogram/server" && DB_DIA
 | 退出登录调后端 | ✅ | user.js + api.js logout |
 | 偏好推荐联动测试 | ✅ | server/tests/integration/recommend-prefs.test.js (8用例) |
 
-## Batch 3 待办（下一批）
-1. 数据质量审计脚本（菜名重复/分类错误/步骤缺失/用量异常/营养不可信）+报告
-2. 图片策略：清理picsum.photos、本地兜底图、图片来源清单
-3. 后端性能/安全加固：索引、N+1、并发安全、JWT强密钥校验、输入校验
-4. 补充测试：收藏并发、权限隔离、Redis降级、搜索边界
+## Batch 3 已完成事项
+| 模块 | 状态 | 文件 |
+|------|------|------|
+| 数据质量审计 | ✅ | server/scripts/audit-data-quality.js + data/quality-report.json |
+| 图片策略 | ✅ | server/scripts/generate-recipe-images.js + client/images/recipes/*.png(13张) |
+| 前端图片兜底 | ✅ | recipe-card binderror→fallback.png |
+| 图片来源清单 | ✅ | docs/IMAGE_SOURCES.md |
+| 生产环境校验 | ✅ | config/index.js validateEnv + app.js启动调用 |
+| 安全测试 | ✅ | server/tests/integration/security.test.js (13用例) |
+
+## 数据质量结论
+- 10000道菜: 无重复菜名/无缺步骤/无空字段/无HTML注入/营养数据合理
+- 769条收藏数>浏览数(生成数据特征,轻微)
+- 图片已全部替换为本地菜系占位图(备份: data/recipe.sqlite.bak-*, 变更记录: data/image-change-log.json)
+
+## Batch 4 待办（下一批）
+1. 部署验证: Docker镜像构建(环境无Docker则明确标记未验证)、健康检查、非root运行
+2. 稳定性测试: 接口持续压测、内存/延迟趋势、SQLite并发
+3. 性能基线: 启动时间、各接口p50/p95/p99
+4. 最终交付物清单核对 + 上线检查清单 + 发布说明
+
+## 关键架构决策（Batch3新增）
+- 图片: 菜系确定性本地占位图(非真实照片), 前端binderror兜底, 上线前按IMAGE_SOURCES.md替换
+- 环境校验: 生产环境弱JWT密钥/占位AppID拒绝启动, 错误只提示变量名不输出密钥值
+- 数据审计: 只读脚本不修改数据, 修复需基于报告另行处理并保留备份
 
 ## 关键架构决策（Batch2新增）
 - 推荐排除逻辑: 忌口食材+过敏原→RecipeIngredient反查recipe_id→Op.notIn; 素食按Ingredient.category排除

@@ -1,10 +1,10 @@
 {
   "project": "recipe-miniprogram",
   "taskType": "24h-deep-development",
-  "lastUpdated": "2026-07-28T16:10:00+08:00",
-  "currentBatch": 2,
+  "lastUpdated": "2026-07-28T16:35:00+08:00",
+  "currentBatch": 3,
   "batchStatus": "complete",
-  "gitCommit": "pending-batch2",
+  "gitCommit": "pending-batch3",
   "completedModules": [
     "env-fix: npm依赖安装(路径空格问题通过/tmp编译绕过)",
     "tabbar-icons: 8个TabBar PNG图标+logo+默认头像+空状态插画+分享卡片图(纯Node生成)",
@@ -15,11 +15,15 @@
     "search-enhance: 搜索防抖400ms+过期请求丢弃+无结果热门词建议",
     "detail-enhance: 人数换算(WXS干净数字)+过敏原提示+收藏防重复点击",
     "cook-mode: 做菜模式页(大字步骤/屏幕常亮/计时器/食材浮层/完成反馈)",
-    "logout-api: 退出登录调用后端审计接口+api.js补logout"
+    "logout-api: 退出登录调用后端审计接口+api.js补logout",
+    "data-audit: 数据质量审计脚本(14类检查)+quality-report.json(10000道菜,仅图片占位+769计数异常)",
+    "image-strategy: 13张菜系确定性本地占位图替换picsum(10000条)+前端binderror兜底+IMAGE_SOURCES.md清单",
+    "env-validate: 生产环境启动校验(弱JWT密钥/占位AppID拒绝启动,密钥不入日志)",
+    "security-tests: 权限隔离/收藏幂等并发/SQL注入/Redis降级 13个安全测试"
   ],
-  "testCount": 49,
-  "testStatus": "49/49 passed",
-  "coverage": "~82% statements",
+  "testCount": 62,
+  "testStatus": "62/62 passed",
+  "coverage": "~83% statements",
   "lastCommands": [
     "cd server && DB_DIALECT=sqlite npx jest --forceExit",
     "cd client && node scripts/generate-icons.js"
@@ -36,8 +40,8 @@
     "真实微信AppID/AppSecret未配置(.env中为占位值)",
     "HTTPS+ICP备案域名未配置",
     "JWT_SECRET为开发弱密钥(生产需替换)",
-    "菜谱图片为picsum.photos随机占位图(Batch3处理)"
+    "菜谱图片为菜系占位图(非真实菜品照片,上线前需按docs/IMAGE_SOURCES.md替换为合法真实图片)"
   ],
-  "nextTask": "Batch3: 数据质量审计脚本+图片策略+后端性能安全加固",
+  "nextTask": "Batch4: 部署验证(Docker构建/健康检查)+稳定性测试+最终交付物清单",
   "nextCommand": "cd server && DB_DIALECT=sqlite npx jest --forceExit"
 }

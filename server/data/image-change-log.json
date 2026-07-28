@@ -1,0 +1,52 @@
+{
+  "changedAt": "2026-07-28T16:16:08.771Z",
+  "strategy": "菜系确定性本地占位图（非真实菜品照片，上线前需替换）",
+  "totalUpdated": 10000,
+  "changes": [
+    {
+      "cuisine_type": "川菜",
+      "cover_image": "/images/recipes/chuancai.png",
+      "affected": 1435
+    },
+    {
+      "cuisine_type": "粤菜",
+      "cover_image": "/images/recipes/yuecai.png",
+      "affected": 1153
+    },
+    {
+      "cuisine_type": "鲁菜",
+      "cover_image": "/images/recipes/lucai.png",
+      "affected": 993
+    },
+    {
+      "cuisine_type": "苏菜",
+      "cover_image": "/images/recipes/sucai.png",
+      "affected": 875
+    },
+    {
+      "cuisine_type": "浙菜",
+      "cover_image": "/images/recipes/zhecai.png",
+      "affected": 857
+    },
+    {
+      "cuisine_type": "闽菜",
+      "cover_image": "/images/recipes/mincai.png",
+      "affected": 806
+    },
+    {
+      "cuisine_type": "湘菜",
+      "cover_image": "/images/recipes/xiangcai.png",
+      "affected": 1214
+    },
+    {
+      "cuisine_type": "徽菜",
+      "cover_image": "/images/recipes/huicai.png",
+      "affected": 844
+    },
+    {
+      "cuisine_type": "家常菜",
+      "cover_image": "/images/recipes/jiachang.png",
+      "affected": 1823
+    }
+  ]
+}
