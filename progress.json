@@ -1,10 +1,12 @@
 {
   "project": "recipe-miniprogram",
   "taskType": "24h-deep-development",
-  "lastUpdated": "2026-07-28T17:00:00+08:00",
-  "currentBatch": 4,
+  "lastUpdated": "2026-07-28T17:45:00+08:00",
+  "currentBatch": 10,
   "batchStatus": "complete",
-  "gitCommit": "pending-batch4",
+  "phase": "发布候选冻结+验收+交付",
+  "gitCommit": "pending-batch5-10",
+  "gitTag": "v1.0.0-rc.1",
   "completedModules": [
     "env-fix: npm依赖安装(路径空格问题通过/tmp编译绕过)",
     "tabbar-icons: 8个TabBar PNG图标+logo+默认头像+空状态插画+分享卡片图(纯Node生成)",
@@ -24,7 +26,16 @@
     "rate-limit-config: 限流阈值可配置(RATE_LIMIT_MAX),生产默认300/min",
     "docker-hardening: Dockerfile非root+HEALTHCHECK+.dockerignore排除密钥(Docker daemon未运行,未实际构建验证)",
     "perf-baseline: 性能测试脚本+报告(p50/p95/p99+60s稳定性7130请求100%成功)",
-    "launch-checklist: docs/LAUNCH_CHECKLIST.md上线检查清单+性能基线+已知限制"
+    "launch-checklist: docs/LAUNCH_CHECKLIST.md上线检查清单+性能基线+已知限制",
+    "rc-freeze: v1.0.0-rc.1冻结(Git tag)+release-manifest/data-manifest/CHANGELOG/RELEASE_NOTES/上线阻塞项清单",
+    "uat: API层验收29/29通过+UAT报告(微信端场景标记待真实环境验证)",
+    "recommend-audit: 推荐终审9/9通过(素食/过敏/30分钟/冷启动/偏好变化等7类样本)",
+    "high-risk-audit: 高风险数据审计(生食/未熟肉类0条,料酒/隔夜为良性命中)",
+    "security-audit: 安全终审报告(权限矩阵21端点)+生产禁Mock验证",
+    "backup-drill: 备份恢复演练真实执行(误删500条→恢复→SHA256一致)",
+    "observability: requestId结构化日志中间件(慢请求标记/不记敏感信息)",
+    "compliance: 隐私政策+用户协议+微信审核材料+演示流程",
+    "final-delivery: 最终交付报告+交付包核对"
   ],
   "testCount": 62,
   "testStatus": "62/62 passed",
@@ -58,6 +69,6 @@
     "JWT_SECRET为开发弱密钥(生产需替换)",
     "菜谱图片为菜系占位图(非真实菜品照片,上线前需按docs/IMAGE_SOURCES.md替换为合法真实图片)"
   ],
-  "nextTask": "全部4个批次完成。剩余为外部依赖项(真实AppID/HTTPS域名/真实图片)和Docker实际构建验证",
+  "nextTask": "发布候选阶段完成。等待外部阻塞项解除(真实AppID/HTTPS域名/微信开发者工具/Docker daemon)后发布v1.0.0正式版",
   "nextCommand": "cd server && DB_DIALECT=sqlite npx jest --forceExit"
 }

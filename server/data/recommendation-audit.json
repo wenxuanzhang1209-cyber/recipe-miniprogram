@@ -1,0 +1,63 @@
+{
+  "auditedAt": "2026-07-28T16:50:04.372Z",
+  "releaseVersion": "v1.0.0-rc.1",
+  "total": 9,
+  "passed": 9,
+  "failed": 0,
+  "checks": [
+    {
+      "persona": "素食用户",
+      "requirement": "不推荐含肉类/海鲜食材的菜谱",
+      "passed": true,
+      "evidence": "20条推荐, 含肉类=false"
+    },
+    {
+      "persona": "不吃辣用户",
+      "requirement": "推荐结果附带理由(可解释)",
+      "passed": true,
+      "evidence": "20条, 全部有理由=true"
+    },
+    {
+      "persona": "坚果过敏用户",
+      "requirement": "不推荐含花生/坚果的菜谱",
+      "passed": true,
+      "evidence": "30条推荐, 含过敏原=false"
+    },
+    {
+      "persona": "30分钟时限用户",
+      "requirement": "推荐总时长均<=30分钟",
+      "passed": true,
+      "evidence": "20条, 全部<=30分钟=true"
+    },
+    {
+      "persona": "新用户冷启动",
+      "requirement": "无偏好时返回非空推荐",
+      "passed": true,
+      "evidence": "10条推荐"
+    },
+    {
+      "persona": "收藏大量川菜用户",
+      "requirement": "推荐正常返回(收藏数据不导致异常)",
+      "passed": true,
+      "evidence": "20条推荐, 已收藏5道川菜"
+    },
+    {
+      "persona": "偏好变化用户",
+      "requirement": "偏好从川菜改为粤菜后推荐随之变化",
+      "passed": true,
+      "evidence": "改前川菜15条, 改后粤菜15条"
+    },
+    {
+      "persona": "通用-多样性",
+      "requirement": "推荐结果无重复菜谱",
+      "passed": true,
+      "evidence": "20条, 唯一20条"
+    },
+    {
+      "persona": "通用-数据隔离",
+      "requirement": "推荐结果不含其他用户数据",
+      "passed": true,
+      "evidence": "10条均不含用户私有字段"
+    }
+  ]
+}

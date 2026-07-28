@@ -1,0 +1,302 @@
+{
+  "testedAt": "2026-07-28T16:47:58.126Z",
+  "releaseVersion": "v1.0.0-rc.1",
+  "target": "http://127.0.0.1:3002",
+  "total": 29,
+  "passed": 29,
+  "failed": 0,
+  "passRate": "100.0%",
+  "note": "API层真实验收。微信端UI交互(下拉刷新/Tab切换/键盘/真机兼容等)需在微信开发者工具+真机验证,见UAT报告\"待真实环境验证\"部分",
+  "cases": [
+    {
+      "caseNo": 1,
+      "scenario": "微信登录(开发Mock码)",
+      "precondition": "服务器运行,dev_前缀Mock",
+      "steps": "POST /auth/wx-login {code:dev_uat_user_1}",
+      "expected": "返回token和用户信息",
+      "actual": "status=200, code=0, 获得token=true",
+      "passed": true,
+      "defect": null
+    },
+    {
+      "caseNo": 2,
+      "scenario": "登录失败-缺少code",
+      "precondition": "服务器运行",
+      "steps": "POST /auth/wx-login {code:\"\"}",
+      "expected": "返回422或错误码",
+      "actual": "status=422, code=422",
+      "passed": true,
+      "defect": null
+    },
+    {
+      "caseNo": 3,
+      "scenario": "首页加载推荐(热门+个性化)",
+      "precondition": "已登录",
+      "steps": "GET popular + recommend",
+      "expected": "两个接口均返回非空列表",
+      "actual": "popular=10条, recommend=6条",
+      "passed": true,
+      "defect": null
+    },
+    {
+      "caseNo": 4,
+      "scenario": "推荐结果附带理由",
+      "precondition": "已登录",
+      "steps": "GET recommend 检查recommend_reason字段",
+      "expected": "每条推荐都有非空理由",
+      "actual": "6/6条有理由",
+      "passed": true,
+      "defect": null
+    },
+    {
+      "caseNo": 5,
+      "scenario": "查看分类树(菜系/口味/做法/餐次)",
+      "precondition": "服务器运行",
+      "steps": "GET /categories",
+      "expected": "返回四维分类且菜系非空",
+      "actual": "cuisine=9个",
+      "passed": true,
+      "defect": null
+    },
+    {
+      "caseNo": 6,
+      "scenario": "分类结果列表",
+      "precondition": "已有分类ID",
+      "steps": "GET /categories/1/recipes",
+      "expected": "返回该分类下菜谱",
+      "actual": "10条",
+      "passed": true,
+      "defect": null
+    },
+    {
+      "caseNo": 7,
+      "scenario": "搜索菜名(红烧)",
+      "precondition": "服务器运行",
+      "steps": "GET /recipes/search?keyword=红烧",
+      "expected": "返回含\"红烧\"的菜谱",
+      "actual": "20条结果",
+      "passed": true,
+      "defect": null
+    },
+    {
+      "caseNo": 8,
+      "scenario": "搜索食材(豆腐)",
+      "precondition": "服务器运行",
+      "steps": "GET /recipes/search?keyword=豆腐",
+      "expected": "正常返回(食材反查)",
+      "actual": "status=200, 20条",
+      "passed": true,
+      "defect": null
+    },
+    {
+      "caseNo": 9,
+      "scenario": "多条件筛选(川菜+难度2+30分钟内)",
+      "precondition": "服务器运行",
+      "steps": "GET /recipes?cuisine=川菜&difficulty=2&maxTime=30",
+      "expected": "结果全部满足三个条件",
+      "actual": "20条, 全部匹配=true",
+      "passed": true,
+      "defect": null
+    },
+    {
+      "caseNo": 10,
+      "scenario": "打开菜谱详情(食材+步骤+营养)",
+      "precondition": "已有菜谱ID",
+      "steps": "GET /recipes/1131",
+      "expected": "返回完整详情含食材和步骤",
+      "actual": "食材=10, 步骤=6, 营养=true",
+      "passed": true,
+      "defect": null
+    },
+    {
+      "caseNo": 11,
+      "scenario": "浏览历史自动写入",
+      "precondition": "已打开过详情",
+      "steps": "GET /history 检查刚浏览的菜谱",
+      "expected": "历史中包含刚浏览的菜谱",
+      "actual": "历史1条, 包含目标=true",
+      "passed": true,
+      "defect": null
+    },
+    {
+      "caseNo": 12,
+      "scenario": "收藏菜谱",
+      "precondition": "已登录,有菜谱ID",
+      "steps": "POST /favorites {recipeId}",
+      "expected": "收藏成功",
+      "actual": "status=200, msg=收藏成功",
+      "passed": true,
+      "defect": null
+    },
+    {
+      "caseNo": 13,
+      "scenario": "查看收藏列表",
+      "precondition": "已收藏",
+      "steps": "GET /favorites",
+      "expected": "收藏列表包含该菜谱",
+      "actual": "收藏1条, 包含目标=true",
+      "passed": true,
+      "defect": null
+    },
+    {
+      "caseNo": 14,
+      "scenario": "重复收藏不产生重复(幂等)",
+      "precondition": "已收藏过",
+      "steps": "再次POST /favorites后查列表",
+      "expected": "该菜谱只出现1次",
+      "actual": "出现1次",
+      "passed": true,
+      "defect": null
+    },
+    {
+      "caseNo": 15,
+      "scenario": "修改用户偏好",
+      "precondition": "已登录",
+      "steps": "PUT /user/preferences",
+      "expected": "偏好保存成功",
+      "actual": "status=200, msg=偏好设置已保存",
+      "passed": true,
+      "defect": null
+    },
+    {
+      "caseNo": 16,
+      "scenario": "推荐随偏好改变(川菜偏好)",
+      "precondition": "已设置川菜偏好",
+      "steps": "GET recommend 检查推荐倾向",
+      "expected": "返回非空推荐",
+      "actual": "20条, 川菜占比=20/20",
+      "passed": true,
+      "defect": null
+    },
+    {
+      "caseNo": 17,
+      "scenario": "忌口食材过滤(猪五花肉)",
+      "precondition": "已设置忌口猪五花肉",
+      "steps": "GET recommend后抽查首条详情食材",
+      "expected": "推荐首条不含猪五花肉",
+      "actual": "首条含猪五花肉=false",
+      "passed": true,
+      "defect": null
+    },
+    {
+      "caseNo": 18,
+      "scenario": "分享链接定位具体菜谱",
+      "precondition": "有菜谱ID",
+      "steps": "GET /recipes/:id (分享路径)",
+      "expected": "通过ID精确返回该菜谱",
+      "actual": "返回id=1131",
+      "passed": true,
+      "defect": null
+    },
+    {
+      "caseNo": 19,
+      "scenario": "重新进入后登录状态恢复",
+      "precondition": "持有token",
+      "steps": "GET /user/profile",
+      "expected": "token仍有效,返回用户资料",
+      "actual": "status=200, userId匹配=true",
+      "passed": true,
+      "defect": null
+    },
+    {
+      "caseNo": 20,
+      "scenario": "用户资料含偏好和统计",
+      "precondition": "已登录",
+      "steps": "GET /user/profile",
+      "expected": "返回preferences和stats",
+      "actual": "有preferences=true, 有stats=true",
+      "passed": true,
+      "defect": null
+    },
+    {
+      "caseNo": 21,
+      "scenario": "访问不存在的菜谱返回404",
+      "precondition": "服务器运行",
+      "steps": "GET /recipes/999999",
+      "expected": "返回404和错误信息",
+      "actual": "status=404, msg=菜谱不存在",
+      "passed": true,
+      "defect": null
+    },
+    {
+      "caseNo": 22,
+      "scenario": "Redis不可用时服务正常(降级)",
+      "precondition": "无Redis连接",
+      "steps": "GET popular",
+      "expected": "降级穿透DB正常返回",
+      "actual": "status=200, 5条",
+      "passed": true,
+      "defect": null
+    },
+    {
+      "caseNo": 23,
+      "scenario": "搜索无结果返回空列表",
+      "precondition": "服务器运行",
+      "steps": "GET search?keyword=不存在的菜名xyz",
+      "expected": "返回空列表不报错",
+      "actual": "status=200, 0条",
+      "passed": true,
+      "defect": null
+    },
+    {
+      "caseNo": 24,
+      "scenario": "连续快速收藏(并发5次)",
+      "precondition": "已登录",
+      "steps": "并发POST /favorites 5次",
+      "expected": "最终只有1条收藏",
+      "actual": "出现1次",
+      "passed": true,
+      "defect": null
+    },
+    {
+      "caseNo": 25,
+      "scenario": "菜谱含份量字段(供人数换算)",
+      "precondition": "已打开详情",
+      "steps": "检查详情servings字段",
+      "expected": "servings>=1",
+      "actual": "servings=4",
+      "passed": true,
+      "defect": null
+    },
+    {
+      "caseNo": 26,
+      "scenario": "步骤完整且有序",
+      "precondition": "已打开详情",
+      "steps": "检查steps数组",
+      "expected": "步骤非空且按序",
+      "actual": "6步, 有序=true",
+      "passed": true,
+      "defect": null
+    },
+    {
+      "caseNo": 27,
+      "scenario": "退出登录(后端审计接口)",
+      "precondition": "已登录",
+      "steps": "POST /auth/logout",
+      "expected": "返回成功",
+      "actual": "status=200, msg=已退出登录",
+      "passed": true,
+      "defect": null
+    },
+    {
+      "caseNo": 28,
+      "scenario": "重新登录",
+      "precondition": "已退出",
+      "steps": "POST /auth/wx-login 同code",
+      "expected": "重新获得token",
+      "actual": "获得token=true",
+      "passed": true,
+      "defect": null
+    },
+    {
+      "caseNo": 29,
+      "scenario": "未登录访问收藏返回401",
+      "precondition": "无token",
+      "steps": "GET /favorites",
+      "expected": "返回401",
+      "actual": "status=401",
+      "passed": true,
+      "defect": null
+    }
+  ]
+}

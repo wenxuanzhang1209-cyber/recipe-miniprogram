@@ -1,0 +1,12 @@
+{
+  "backupAt": "2026-07-28T16:53:44.175Z",
+  "backupFile": "recipe-20260729-005344.sqlite",
+  "sha256": "72b877a9f3ebb391ff48b7c5043987938b5f23f431dde760dd9df62afa061fc7",
+  "sizeBytes": 34009088,
+  "recordCounts": {
+    "recipes": 10000,
+    "users": 11,
+    "favorites": 8,
+    "browseHistory": 2
+  }
+}

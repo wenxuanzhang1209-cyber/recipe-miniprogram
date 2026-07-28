@@ -8,6 +8,7 @@ const rateLimit = require('express-rate-limit');
 const config = require('./config');
 const routes = require('./routes');
 const { errorHandler, notFound } = require('./middlewares/error');
+const { requestLogger } = require('./middlewares/logger');
 
 const app = express();
 
@@ -17,6 +18,9 @@ app.use(cors());
 app.use(compression());
 app.use(express.json({ limit: '2mb' }));
 app.use(express.urlencoded({ extended: true }));
+
+// 结构化请求日志（requestId 链路追踪）
+app.use(requestLogger);
 
 if (config.env !== 'test') {
   app.use(morgan(config.env === 'development' ? 'dev' : 'combined'));

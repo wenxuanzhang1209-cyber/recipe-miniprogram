@@ -1,9 +1,10 @@
 # RESUME — 长任务恢复指南
 
 ## 当前状态
-- **全部 4 个批次已完成**，测试 62/62 通过
+- **发布候选 v1.0.0-rc.1 已冻结**（Git tag），测试 62/62 通过
+- 已完成: 功能开发(Batch1-4) + 发布冻结/UAT/终审/演练/交付(Batch5-10)
 - 最后更新: 2026-07-28
-- 剩余为外部依赖项（真实AppID/HTTPS域名/真实图片）和 Docker 实际构建验证
+- 等待外部阻塞项解除后发布 v1.0.0 正式版
 
 ## 下一条可直接执行的命令
 
@@ -79,6 +80,29 @@ cd "/Users/wenxuanzhang/Desktop/Vibe Coding/recipe-miniprogram/server" && DB_DIA
 ## 性能基线（开发机SQLite无Redis）
 - 热门1.9ms/推荐3.8ms/列表3.1ms/搜索43.5ms/详情258ms/分类1.2ms (p50)
 - 稳定性: 60s 7130请求 100%成功 平均125.7RPS 无衰减
+
+## 发布候选阶段成果 (Batch5-10)
+| 模块 | 状态 | 文件 |
+|------|------|------|
+| RC冻结 | ✅ | Git tag v1.0.0-rc.1 + release-manifest.json + data-manifest.json |
+| 变更日志/发布说明 | ✅ | CHANGELOG.md + RELEASE_NOTES.md |
+| 上线阻塞项清单 | ✅ | 上线阻塞项清单.md |
+| UAT验收 | ✅ 29/29 | docs/UAT_REPORT.md + data/uat-report.json |
+| 推荐终审 | ✅ 9/9 | scripts/audit-recommendation.js + data/recommendation-audit.json |
+| 高风险数据审计 | ✅ | scripts/audit-high-risk.js + data/high-risk-report.json |
+| 安全终审 | ✅ | docs/SECURITY_AUDIT.md (权限矩阵21端点) |
+| 备份恢复演练 | ✅ 真实执行 | scripts/backup-db.js + restore-db.js |
+| 可观测性 | ✅ | middlewares/logger.js (requestId结构化日志) |
+| 合规材料 | ✅ | PRIVACY_POLICY.md + USER_AGREEMENT.md + WECHAT_REVIEW_MATERIALS.md |
+| 演示流程 | ✅ | docs/DEMO_FLOW.md |
+| 最终交付报告 | ✅ | docs/FINAL_DELIVERY_REPORT.md |
+
+## 外部阻塞项(非代码问题,解除后发v1.0.0)
+1. 真实微信AppID/AppSecret → 真实登录联调
+2. HTTPS+ICP备案域名 → 微信服务器域名配置
+3. 微信开发者工具+真机 → UI/兼容性验证
+4. Docker daemon → 实际构建/部署/回滚演练
+5. 真实菜品图片 → 按docs/IMAGE_SOURCES.md替换
 
 ## 全部批次总览
 | 批次 | 内容 | 状态 |
