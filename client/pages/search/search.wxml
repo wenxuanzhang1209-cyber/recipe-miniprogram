@@ -1,0 +1,57 @@
+<!-- pages/search/search.wxml - 搜索页 -->
+<view class="page">
+
+  <!-- 搜索输入框 -->
+  <view class="search-box">
+    <view class="search-input-wrap">
+      <text class="search-icon">🔍</text>
+      <input class="search-input" placeholder="搜索菜名、食材" value="{{keyword}}"
+             focus confirm-type="search"
+             bindinput="onInput" bindconfirm="onConfirm" />
+      <text class="clear-btn" wx:if="{{keyword}}" bindtap="clearKeyword">✕</text>
+    </view>
+    <view class="search-btn" bindtap="onConfirm">搜索</view>
+  </view>
+
+  <!-- 未搜索：历史 + 热门 -->
+  <block wx:if="{{!searched}}">
+    <view class="kw-section" wx:if="{{history.length}}">
+      <view class="kw-head flex-between">
+        <view class="kw-title">搜索历史</view>
+        <view class="kw-clear" bindtap="clearHistory">🗑</view>
+      </view>
+      <view class="kw-list">
+        <view class="kw-chip" wx:for="{{history}}" wx:key="*this"
+              bindtap="onTapKeyword" data-kw="{{item}}">{{item}}</view>
+      </view>
+    </view>
+
+    <view class="kw-section">
+      <view class="kw-head">
+        <view class="kw-title">🔥 热门搜索</view>
+      </view>
+      <view class="kw-list">
+        <view class="kw-chip hot" wx:for="{{hotKeywords}}" wx:key="*this"
+              bindtap="onTapKeyword" data-kw="{{item}}">{{item}}</view>
+      </view>
+    </view>
+  </block>
+
+  <!-- 搜索结果 -->
+  <block wx:else>
+    <view class="result-info" wx:if="{{list.length}}">找到相关菜谱</view>
+    <view class="list-col">
+      <recipe-card wx:for="{{list}}" wx:key="id" recipe="{{item}}" mode="list" />
+    </view>
+
+    <view class="load-status" wx:if="{{list.length}}">
+      <text wx:if="{{loading}}">加载中...</text>
+      <text wx:elif="{{!hasMore}}">— 已经到底啦 —</text>
+    </view>
+
+    <view class="empty-wrap" wx:if="{{!loading && !list.length}}">
+      <view class="empty-icon">🔍</view>
+      <view class="empty-text">没有找到相关菜谱，换个关键词试试吧</view>
+    </view>
+  </block>
+</view>

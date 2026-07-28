@@ -1,0 +1,137 @@
+/* app.wxss - 全局样式入口
+ * 设计系统已拆分至 styles/ 目录：
+ * - tokens.wxss: 设计变量（色彩/字体/间距/圆角/阴影/动效）
+ * - base.wxss: 通用组件（布局/按钮/徽章/卡片/骨架屏/空状态/动效）
+ */
+@import "styles/tokens.wxss";
+@import "styles/base.wxss";
+/* app.wxss - 全局样式 & 设计系统 */
+
+/* ===== 设计变量（通过 CSS 变量实现主题） ===== */
+page {
+  --primary: #FF6B35;
+  --primary-light: #FF8C61;
+  --primary-bg: #FFF1EB;
+  --text-main: #2D3436;
+  --text-sub: #636E72;
+  --text-light: #9CA3AF;
+  --bg: #F8F9FA;
+  --card-bg: #FFFFFF;
+  --divider: #F0F0F0;
+  --success: #00B894;
+  --warning: #FDCB6E;
+  --radius-sm: 12rpx;
+  --radius-md: 20rpx;
+  --radius-lg: 32rpx;
+  --shadow: 0 4rpx 24rpx rgba(0, 0, 0, 0.06);
+
+  background: var(--bg);
+  color: var(--text-main);
+  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Helvetica Neue', sans-serif;
+  font-size: 28rpx;
+  line-height: 1.6;
+}
+
+/* ===== 通用工具类 ===== */
+.card {
+  background: var(--card-bg);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow);
+}
+
+.flex { display: flex; }
+.flex-col { display: flex; flex-direction: column; }
+.flex-center { display: flex; align-items: center; justify-content: center; }
+.flex-between { display: flex; align-items: center; justify-content: space-between; }
+.flex-1 { flex: 1; }
+
+.text-primary { color: var(--primary); }
+.text-sub { color: var(--text-sub); }
+.text-light { color: var(--text-light); }
+
+.ellipsis {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.ellipsis-2 {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
+/* ===== 标签徽章 ===== */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4rpx 16rpx;
+  border-radius: 100rpx;
+  font-size: 20rpx;
+  background: var(--primary-bg);
+  color: var(--primary);
+}
+
+.badge-gray {
+  background: #F3F4F6;
+  color: var(--text-sub);
+}
+
+/* ===== 按钮重置 ===== */
+button {
+  margin: 0;
+  padding: 0;
+  background: none;
+  border-radius: 0;
+  line-height: inherit;
+  font-size: inherit;
+}
+button::after { border: none; }
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+  color: #fff;
+  border-radius: 100rpx;
+  padding: 24rpx 0;
+  font-size: 32rpx;
+  font-weight: 600;
+  text-align: center;
+  box-shadow: 0 8rpx 24rpx rgba(255, 107, 53, 0.35);
+  transition: opacity 0.2s;
+}
+.btn-primary:active { opacity: 0.85; }
+
+/* ===== 骨架屏动画 ===== */
+@keyframes skeleton-pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.45; }
+  100% { opacity: 1; }
+}
+
+.skeleton {
+  background: #ECEFF1;
+  border-radius: var(--radius-sm);
+  animation: skeleton-pulse 1.4s ease-in-out infinite;
+}
+
+/* ===== 页面过渡淡入 ===== */
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(24rpx); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+  animation: fade-in-up 0.35s ease both;
+}
+
+/* ===== 空状态 ===== */
+.empty-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 120rpx 0;
+  color: var(--text-light);
+}
+.empty-icon { font-size: 96rpx; margin-bottom: 24rpx; }
+.empty-text { font-size: 28rpx; }

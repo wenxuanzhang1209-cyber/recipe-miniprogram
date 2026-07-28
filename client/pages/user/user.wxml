@@ -1,0 +1,79 @@
+<!-- pages/user/user.wxml - 用户中心 -->
+<view class="page">
+
+  <!-- 未登录 -->
+  <view class="login-card card" wx:if="{{!isLoggedIn}}">
+    <view class="login-emoji">👨‍🍳</view>
+    <view class="login-title">登录发现更多美味</view>
+    <view class="login-sub">收藏菜谱、同步浏览记录</view>
+    <view class="btn-primary login-btn" bindtap="goLogin">微信一键登录</view>
+  </view>
+
+  <!-- 已登录 -->
+  <block wx:else>
+    <!-- 用户信息卡 -->
+    <view class="profile-card card">
+      <image class="avatar" wx:if="{{profile.avatar}}" src="{{profile.avatar}}" mode="aspectFill" />
+      <view class="avatar avatar-emoji" wx:else>👨‍🍳</view>
+      <view class="profile-info">
+        <view class="nickname">{{profile.nickname || '美食爱好者'}}</view>
+        <view class="join-date">{{joinDaysText}}</view>
+      </view>
+      <view class="logout-btn" bindtap="onLogout">退出</view>
+    </view>
+
+    <!-- 功能入口 -->
+    <view class="menu-row card">
+      <view class="menu-item" bindtap="goPreferences">
+        <view class="menu-icon">🎯</view>
+        <view class="menu-label">饮食偏好设置</view>
+        <view class="menu-arrow">›</view>
+      </view>
+    </view>
+
+    <!-- 数据统计 -->
+    <view class="stats-row card">
+      <view class="stats-item">
+        <view class="stats-num">{{profile.stats.favoriteCount || 0}}</view>
+        <view class="stats-label">收藏</view>
+      </view>
+      <view class="stats-divider"></view>
+      <view class="stats-item">
+        <view class="stats-num">{{profile.stats.historyCount || 0}}</view>
+        <view class="stats-label">看过</view>
+      </view>
+    </view>
+
+    <!-- Tab 切换 -->
+    <view class="tab-bar">
+      <view class="tab-item {{activeTab === 'favorites' ? 'on' : ''}}"
+            bindtap="onTabTap" data-tab="favorites">我的收藏</view>
+      <view class="tab-item {{activeTab === 'history' ? 'on' : ''}}"
+            bindtap="onTabTap" data-tab="history">浏览历史</view>
+      <view class="clear-history" wx:if="{{activeTab === 'history' && history.length}}"
+            bindtap="onClearHistory">清空</view>
+    </view>
+
+    <!-- 收藏列表 -->
+    <block wx:if="{{activeTab === 'favorites'}}">
+      <view class="list-col">
+        <recipe-card wx:for="{{favorites}}" wx:key="id" recipe="{{item}}" mode="list" />
+      </view>
+      <view class="empty-wrap" wx:if="{{!favorites.length}}">
+        <view class="empty-icon">🤍</view>
+        <view class="empty-text">还没有收藏的菜谱</view>
+      </view>
+    </block>
+
+    <!-- 历史列表 -->
+    <block wx:else>
+      <view class="list-col">
+        <recipe-card wx:for="{{history}}" wx:key="id" recipe="{{item}}" mode="list" />
+      </view>
+      <view class="empty-wrap" wx:if="{{!history.length}}">
+        <view class="empty-icon">👀</view>
+        <view class="empty-text">还没有浏览记录</view>
+      </view>
+    </block>
+  </block>
+</view>

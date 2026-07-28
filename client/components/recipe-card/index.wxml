@@ -1,0 +1,31 @@
+<!-- components/recipe-card/index.wxml -->
+<wxs module="fmt">
+  var views = function (n) {
+    if (!n && n !== 0) return '0';
+    if (n >= 10000) return (n / 10000).toFixed(1) + 'w';
+    return '' + n;
+  };
+  module.exports = { views: views };
+</wxs>
+<view class="rc {{mode === 'list' ? 'rc-list' : 'rc-grid'}} fade-in" bindtap="onTap" hover-class="rc-hover">
+  <view class="rc-img-wrap">
+    <image class="rc-img" src="{{recipe.cover_image}}" mode="aspectFill" lazy-load="{{true}}" />
+    <view class="rc-time-badge" wx:if="{{recipe.prep_time || recipe.cook_time}}">
+      ⏱ {{recipe.prep_time + recipe.cook_time}}分钟
+    </view>
+  </view>
+  <view class="rc-body">
+    <view class="rc-name ellipsis">{{recipe.name}}</view>
+    <view class="rc-desc ellipsis-2" wx:if="{{mode === 'list' && recipe.description}}">{{recipe.description}}</view>
+    <view class="rc-meta">
+      <text class="badge">{{recipe.cuisine_type}}</text>
+      <text class="badge badge-gray">{{recipe.taste}}</text>
+    </view>
+    <view class="rc-bottom flex-between">
+      <view class="rc-stars">
+        <text class="rc-star {{idx < recipe.difficulty ? 'on' : ''}}" wx:for="{{[0,1,2,3,4]}}" wx:for-item="d" wx:for-index="idx" wx:key="idx">★</text>
+      </view>
+      <text class="rc-views">{{fmt.views(recipe.view_count)}}人看过</text>
+    </view>
+  </view>
+</view>

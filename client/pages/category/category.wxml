@@ -1,0 +1,30 @@
+<!-- pages/category/category.wxml - 分类页 -->
+<view class="page">
+  <!-- 左侧类型导航 -->
+  <view class="side-nav">
+    <view class="side-item {{activeType === item.key ? 'on' : ''}}"
+          wx:for="{{typeTabs}}" wx:key="key"
+          bindtap="onTypeTap" data-key="{{item.key}}">
+      {{item.label}}
+    </view>
+  </view>
+
+  <!-- 右侧分类内容 -->
+  <scroll-view class="content" scroll-y>
+    <block wx:if="{{loading}}">
+      <view class="skeleton cat-sk" wx:for="{{[1,2,3,4,5,6]}}" wx:key="*this"></view>
+    </block>
+    <block wx:else>
+      <view class="cat-cell card fade-in" wx:for="{{currentList}}" wx:key="id"
+            bindtap="goList" data-id="{{item.id}}" data-name="{{item.name}}">
+        <view class="cat-cell-icon">{{item.icon || '🍲'}}</view>
+        <view class="cat-cell-name">{{item.name}}</view>
+        <view class="cat-cell-arrow">›</view>
+      </view>
+      <view class="empty-wrap" wx:if="{{!currentList.length}}">
+        <view class="empty-icon">📂</view>
+        <view class="empty-text">暂无分类</view>
+      </view>
+    </block>
+  </scroll-view>
+</view>

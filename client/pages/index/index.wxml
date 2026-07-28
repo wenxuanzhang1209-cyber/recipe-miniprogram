@@ -1,0 +1,64 @@
+<!-- pages/index/index.wxml - 首页 -->
+<view class="page">
+
+  <!-- 搜索栏 -->
+  <view class="search-bar" bindtap="goSearch">
+    <text class="search-icon">🔍</text>
+    <text class="search-placeholder">搜索菜名、食材，如"红烧肉"</text>
+  </view>
+
+  <!-- 骨架屏 -->
+  <block wx:if="{{loading}}">
+    <view class="skeleton banner-skeleton"></view>
+    <view class="skeleton-grid">
+      <view class="skeleton cat-skeleton" wx:for="{{[1,2,3,4]}}" wx:key="*this"></view>
+    </view>
+    <view class="skeleton card-skeleton" wx:for="{{[1,2]}}" wx:key="*this"></view>
+  </block>
+
+  <block wx:else>
+    <!-- 轮播 Banner -->
+    <swiper class="banner" autoplay circular interval="4000" indicator-dots indicator-active-color="#FF6B35">
+      <swiper-item wx:for="{{banners}}" wx:key="id" bindtap="goBanner" data-id="{{item.id}}">
+        <view class="banner-item">
+          <image class="banner-img" src="{{item.cover_image}}" mode="aspectFill" />
+          <view class="banner-mask">
+            <view class="banner-title ellipsis">{{item.name}}</view>
+            <view class="banner-sub">{{item.cuisine_type}} · {{item.taste}} · {{item.prep_time + item.cook_time}}分钟</view>
+          </view>
+        </view>
+      </swiper-item>
+    </swiper>
+
+    <!-- 分类快捷入口 -->
+    <view class="cat-grid card">
+      <view class="cat-item" wx:for="{{quickCats}}" wx:key="id"
+            bindtap="goCategory" data-id="{{item.id}}" data-name="{{item.name}}">
+        <view class="cat-icon">{{item.icon || '🍲'}}</view>
+        <view class="cat-name">{{item.name}}</view>
+      </view>
+    </view>
+
+    <!-- 今日推荐 -->
+    <view class="section">
+      <view class="section-head flex-between">
+        <view class="section-title">今日推荐</view>
+        <view class="section-more" bindtap="goBrowse">更多 ›</view>
+      </view>
+      <view class="grid-2">
+        <recipe-card wx:for="{{recommends}}" wx:key="id" recipe="{{item}}" mode="grid" />
+      </view>
+    </view>
+
+    <!-- 热门榜单 -->
+    <view class="section">
+      <view class="section-head flex-between">
+        <view class="section-title">热门榜单</view>
+        <view class="section-more" bindtap="goBrowse">更多 ›</view>
+      </view>
+      <view class="list-col">
+        <recipe-card wx:for="{{populars}}" wx:key="id" recipe="{{item}}" mode="list" />
+      </view>
+    </view>
+  </block>
+</view>

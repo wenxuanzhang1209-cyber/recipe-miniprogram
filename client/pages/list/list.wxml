@@ -1,0 +1,22 @@
+<!-- pages/list/list.wxml - 分类菜谱列表页 -->
+<view class="page">
+  <block wx:if="{{firstLoading}}">
+    <view class="skeleton sk-item" wx:for="{{[1,2,3,4]}}" wx:key="*this"></view>
+  </block>
+
+  <block wx:else>
+    <view class="grid-2">
+      <recipe-card wx:for="{{list}}" wx:key="id" recipe="{{item}}" mode="grid" />
+    </view>
+
+    <view class="load-status" wx:if="{{list.length}}">
+      <text wx:if="{{loading}}">加载中...</text>
+      <text wx:elif="{{!hasMore}}">— 已经到底啦 —</text>
+    </view>
+
+    <view class="empty-wrap" wx:if="{{!list.length}}">
+      <view class="empty-icon">🍽️</view>
+      <view class="empty-text">该分类下暂无菜谱</view>
+    </view>
+  </block>
+</view>

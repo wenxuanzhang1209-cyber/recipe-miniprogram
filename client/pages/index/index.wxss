@@ -1,0 +1,105 @@
+/* pages/index/index.wxss */
+.page { padding: 24rpx; }
+
+/* 搜索栏 */
+.search-bar {
+  display: flex;
+  align-items: center;
+  height: 76rpx;
+  padding: 0 28rpx;
+  background: #fff;
+  border-radius: 100rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.05);
+}
+.search-icon { margin-right: 14rpx; font-size: 28rpx; }
+.search-placeholder { color: var(--text-light); font-size: 26rpx; }
+
+/* Banner */
+.banner {
+  height: 340rpx;
+  margin-top: 24rpx;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+.banner-item { position: relative; width: 100%; height: 100%; }
+.banner-img { width: 100%; height: 100%; border-radius: var(--radius-lg); }
+.banner-mask {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  padding: 40rpx 28rpx 24rpx;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.65));
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+}
+.banner-title { color: #fff; font-size: 34rpx; font-weight: 700; }
+.banner-sub { color: rgba(255, 255, 255, 0.85); font-size: 22rpx; margin-top: 4rpx; }
+
+/* 分类快捷入口 */
+.cat-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24rpx 0;
+  margin-top: 24rpx;
+  padding: 30rpx 0;
+}
+.cat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.15s;
+}
+.cat-item:active { transform: scale(0.92); }
+.cat-icon {
+  width: 88rpx;
+  height: 88rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 44rpx;
+  background: var(--primary-bg);
+  border-radius: 28rpx;
+}
+.cat-name { margin-top: 10rpx; font-size: 24rpx; color: var(--text-main); }
+
+/* 区块 */
+.section { margin-top: 40rpx; }
+.section-head { margin-bottom: 20rpx; }
+.section-title {
+  font-size: 34rpx;
+  font-weight: 700;
+  position: relative;
+  padding-left: 20rpx;
+}
+.section-title::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 50%;
+  transform: translateY(-50%);
+  width: 8rpx; height: 30rpx;
+  background: var(--primary);
+  border-radius: 100rpx;
+}
+.section-more { font-size: 24rpx; color: var(--text-light); }
+
+/* 双列网格 */
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20rpx;
+}
+
+.list-col {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+/* 骨架屏 */
+.banner-skeleton { height: 340rpx; margin-top: 24rpx; border-radius: 32rpx; }
+.skeleton-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20rpx;
+  margin-top: 24rpx;
+}
+.cat-skeleton { height: 130rpx; }
+.card-skeleton { height: 200rpx; margin-top: 24rpx; }

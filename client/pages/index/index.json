@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "家常菜谱",
+  "enablePullDownRefresh": true,
+  "usingComponents": {
+    "recipe-card": "/components/recipe-card/index"
+  }
+}

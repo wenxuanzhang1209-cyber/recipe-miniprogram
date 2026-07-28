@@ -1,0 +1,17 @@
+/* pages/list/list.wxss */
+.page { padding: 24rpx; }
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20rpx;
+}
+
+.load-status {
+  text-align: center;
+  padding: 30rpx 0;
+  color: var(--text-light);
+  font-size: 24rpx;
+}
+
+.sk-item { height: 380rpx; margin-bottom: 20rpx; }

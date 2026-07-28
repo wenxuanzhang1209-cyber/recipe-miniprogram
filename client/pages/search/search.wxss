@@ -1,0 +1,70 @@
+/* pages/search/search.wxss */
+.page { padding: 24rpx; }
+
+/* 搜索框 */
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+}
+.search-input-wrap {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  height: 76rpx;
+  padding: 0 28rpx;
+  background: #fff;
+  border-radius: 100rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.05);
+}
+.search-icon { margin-right: 14rpx; font-size: 28rpx; }
+.search-input { flex: 1; font-size: 28rpx; }
+.clear-btn {
+  padding: 8rpx;
+  color: var(--text-light);
+  font-size: 26rpx;
+}
+.search-btn {
+  font-size: 30rpx;
+  color: var(--primary);
+  font-weight: 600;
+}
+
+/* 关键词区块 */
+.kw-section { margin-top: 44rpx; }
+.kw-head { margin-bottom: 20rpx; }
+.kw-title { font-size: 30rpx; font-weight: 600; }
+.kw-clear { color: var(--text-light); font-size: 28rpx; }
+.kw-list { display: flex; flex-wrap: wrap; gap: 16rpx; }
+.kw-chip {
+  padding: 12rpx 30rpx;
+  background: #fff;
+  border-radius: 100rpx;
+  font-size: 26rpx;
+  color: var(--text-sub);
+  transition: transform 0.15s;
+}
+.kw-chip:active { transform: scale(0.94); }
+.kw-chip.hot {
+  background: var(--primary-bg);
+  color: var(--primary);
+}
+
+/* 结果 */
+.result-info {
+  margin: 32rpx 0 16rpx;
+  font-size: 24rpx;
+  color: var(--text-light);
+}
+.list-col {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+  margin-top: 24rpx;
+}
+.load-status {
+  text-align: center;
+  padding: 30rpx 0;
+  color: var(--text-light);
+  font-size: 24rpx;
+}

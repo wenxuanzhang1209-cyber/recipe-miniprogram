@@ -1,0 +1,56 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/browse/browse",
+    "pages/search/search",
+    "pages/detail/detail",
+    "pages/category/category",
+    "pages/user/user",
+    "pages/login/login",
+    "pages/list/list",
+    "pages/preferences/preferences"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#FFFFFF",
+    "navigationBarTitleText": "家常菜谱",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#F8F9FA",
+    "enablePullDownRefresh": false
+  },
+  "tabBar": {
+    "color": "#9CA3AF",
+    "selectedColor": "#FF6B35",
+    "backgroundColor": "#FFFFFF",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页",
+        "iconPath": "images/tab-home.png",
+        "selectedIconPath": "images/tab-home-active.png"
+      },
+      {
+        "pagePath": "pages/category/category",
+        "text": "分类",
+        "iconPath": "images/tab-category.png",
+        "selectedIconPath": "images/tab-category-active.png"
+      },
+      {
+        "pagePath": "pages/browse/browse",
+        "text": "菜谱",
+        "iconPath": "images/tab-browse.png",
+        "selectedIconPath": "images/tab-browse-active.png"
+      },
+      {
+        "pagePath": "pages/user/user",
+        "text": "我的",
+        "iconPath": "images/tab-user.png",
+        "selectedIconPath": "images/tab-user-active.png"
+      }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents"
+}

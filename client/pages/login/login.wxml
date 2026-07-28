@@ -1,0 +1,19 @@
+<!-- pages/login/login.wxml - 登录页 -->
+<view class="page flex-col flex-center">
+  <view class="logo-area">
+    <view class="logo-emoji">🍳</view>
+    <view class="app-name">家常菜谱</view>
+    <view class="app-slogan">10000+ 道家常菜，天天不重样</view>
+  </view>
+
+  <view class="login-area">
+    <button class="btn-primary wx-login-btn {{loading ? 'disabled' : ''}}" bindtap="onWxLogin">
+      {{loading ? '登录中...' : '微信一键登录'}}
+    </button>
+    <view class="skip-btn" bindtap="goBack">暂不登录，先逛逛</view>
+  </view>
+
+  <view class="agreement">
+    登录即代表同意《用户协议》和《隐私政策》
+  </view>
+</view>

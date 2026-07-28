@@ -1,0 +1,179 @@
+<!-- pages/preferences/preferences.wxml - 饮食偏好设置 -->
+<view class="page">
+
+  <!-- 加载态 -->
+  <view wx:if="{{loading}}" class="loading-wrap">
+    <view class="skeleton sk-block" wx:for="{{[1,2,3,4]}}" wx:key="*this"></view>
+  </view>
+
+  <block wx:else>
+    <!-- 顶部说明 -->
+    <view class="pref-header">
+      <view class="pref-header-title">告诉我你的口味</view>
+      <view class="pref-header-desc">设置后，首页推荐和菜谱筛选将为你量身定制</view>
+    </view>
+
+    <!-- 喜欢的菜系 -->
+    <view class="pref-section card">
+      <view class="sec-head">
+        <view class="sec-title">🍜 喜欢的菜系</view>
+        <view class="sec-hint">{{prefs.cuisines.length}}/5</view>
+      </view>
+      <view class="chip-wrap">
+        <view class="chip {{prefs.cuisines.indexOf(item) >= 0 ? 'on' : ''}}"
+              wx:for="{{cuisines}}" wx:key="*this"
+              bindtap="toggleCuisine" data-name="{{item}}">{{item}}</view>
+      </view>
+    </view>
+
+    <!-- 辣度偏好 -->
+    <view class="pref-section card">
+      <view class="sec-head">
+        <view class="sec-title">🌶️ 辣度偏好</view>
+      </view>
+      <view class="seg-row">
+        <view class="seg-item {{prefs.spiceLevel === item.key ? 'on' : ''}}"
+              wx:for="{{spiceLevels}}" wx:key="key"
+              bindtap="onSpiceTap" data-key="{{item.key}}">
+          <view class="seg-icon">{{item.icon}}</view>
+          <view class="seg-label">{{item.label}}</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 忌口食材 -->
+    <view class="pref-section card">
+      <view class="sec-head">
+        <view class="sec-title">🚫 忌口食材</view>
+        <view class="sec-hint">不会推荐含这些食材的菜</view>
+      </view>
+      <view class="tag-wrap" wx:if="{{prefs.avoidIngredients.length}}">
+        <view class="tag-item" wx:for="{{prefs.avoidIngredients}}" wx:key="*this">
+          <text>{{item}}</text>
+          <text class="tag-del" bindtap="removeAvoidTag" data-name="{{item}}">✕</text>
+        </view>
+      </view>
+      <view class="avoid-input-row">
+        <input class="avoid-input" placeholder="输入食材名，如：香菜" value="{{avoidInput}}"
+               bindinput="onAvoidInput" bindconfirm="addAvoidTag" confirm-type="done" />
+        <view class="avoid-add-btn {{avoidInput ? 'active' : ''}}" bindtap="addAvoidTag">添加</view>
+      </view>
+      <view class="suggest-row" wx:if="{{showAvoidSuggestions}}">
+        <view class="suggest-item" wx:for="{{avoidSuggestions}}" wx:key="*this"
+              bindtap="addAvoidTag" data-name="{{item}}">{{item}}</view>
+      </view>
+      <view class="quick-avoid">
+        <view class="quick-label">常见忌口：</view>
+        <view class="chip-wrap">
+          <view class="chip mini {{prefs.avoidIngredients.indexOf(item) >= 0 ? 'on' : ''}}"
+                wx:for="{{commonAvoid}}" wx:key="*this"
+                bindtap="toggleAvoidQuick" data-name="{{item}}">{{item}}</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 饮食目标 -->
+    <view class="pref-section card">
+      <view class="sec-head">
+        <view class="sec-title">🎯 饮食目标</view>
+      </view>
+      <view class="goal-list">
+        <view class="goal-item {{prefs.dietGoal === item.key ? 'on' : ''}}"
+              wx:for="{{dietGoals}}" wx:key="key"
+              bindtap="onGoalTap" data-key="{{item.key}}">
+          <view class="goal-info">
+            <view class="goal-label">{{item.label}}</view>
+            <view class="goal-desc">{{item.desc}}</view>
+          </view>
+          <view class="goal-check">{{prefs.dietGoal === item.key ? '✓' : ''}}</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 荤素偏好 -->
+    <view class="pref-section card">
+      <view class="sec-head">
+        <view class="sec-title">🥗 荤素偏好</view>
+      </view>
+      <view class="chip-wrap">
+        <view class="chip {{prefs.dietType === item.key ? 'on' : ''}}"
+              wx:for="{{dietTypes}}" wx:key="key"
+              bindtap="onDietTypeTap" data-key="{{item.key}}">{{item.label}}</view>
+      </view>
+    </view>
+
+    <!-- 过敏原 -->
+    <view class="pref-section card">
+      <view class="sec-head">
+        <view class="sec-title">⚠️ 过敏原</view>
+        <view class="sec-hint">含过敏原菜谱将标注提醒</view>
+      </view>
+      <view class="chip-wrap">
+        <view class="chip warn {{prefs.allergens.indexOf(item) >= 0 ? 'on' : ''}}"
+              wx:for="{{allergenOptions}}" wx:key="*this"
+              bindtap="toggleAllergen" data-name="{{item}}">{{item}}</view>
+      </view>
+    </view>
+
+    <!-- 烹饪难度 -->
+    <view class="pref-section card">
+      <view class="sec-head">
+        <view class="sec-title">👨‍🍳 可接受难度</view>
+        <view class="sec-hint">不选则推荐全部难度</view>
+      </view>
+      <view class="diff-row">
+        <view class="diff-item {{prefs.difficulties.indexOf(item) >= 0 ? 'on' : ''}}"
+              wx:for="{{[1,2,3,4,5]}}" wx:key="*this"
+              bindtap="toggleDifficulty" data-value="{{item}}">
+          <view class="diff-stars">{{item}}星</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 制作时长 -->
+    <view class="pref-section card">
+      <view class="sec-head">
+        <view class="sec-title">⏱️ 可接受制作时长</view>
+      </view>
+      <view class="chip-wrap">
+        <view class="chip {{prefs.maxCookTime === item.value ? 'on' : ''}}"
+              wx:for="{{maxTimeOptions}}" wx:key="value"
+              bindtap="onMaxTimeTap" data-value="{{item.value}}">{{item.label}}</view>
+      </view>
+    </view>
+
+    <!-- 常用厨具 -->
+    <view class="pref-section card">
+      <view class="sec-head">
+        <view class="sec-title">🍳 家中常用厨具</view>
+      </view>
+      <view class="chip-wrap">
+        <view class="chip {{prefs.equipment.indexOf(item) >= 0 ? 'on' : ''}}"
+              wx:for="{{equipmentOptions}}" wx:key="*this"
+              bindtap="toggleEquipment" data-name="{{item}}">{{item}}</view>
+      </view>
+    </view>
+
+    <!-- 每餐人数 -->
+    <view class="pref-section card">
+      <view class="sec-head">
+        <view class="sec-title">👥 每餐人数</view>
+        <view class="sec-hint">详情页食材用量将按此换算</view>
+      </view>
+      <view class="stepper-row">
+        <view class="stepper-btn {{prefs.servings <= 1 ? 'disabled' : ''}}" bindtap="onServingsChange" data-delta="-1">−</view>
+        <view class="stepper-value">{{prefs.servings}} 人</view>
+        <view class="stepper-btn {{prefs.servings >= 12 ? 'disabled' : ''}}" bindtap="onServingsChange" data-delta="1">＋</view>
+      </view>
+    </view>
+
+    <!-- 底部操作 -->
+    <view class="pref-footer">
+      <view class="footer-reset" bindtap="onReset">恢复默认</view>
+      <view class="btn-primary footer-save {{saving ? 'disabled' : ''}}" bindtap="onSave">
+        {{saving ? '保存中...' : '保存偏好'}}
+      </view>
+    </view>
+    <view class="footer-space"></view>
+  </block>
+</view>

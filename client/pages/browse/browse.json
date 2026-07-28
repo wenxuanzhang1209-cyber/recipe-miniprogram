@@ -1,0 +1,8 @@
+{
+  "navigationBarTitleText": "全部菜谱",
+  "enablePullDownRefresh": true,
+  "onReachBottomDistance": 100,
+  "usingComponents": {
+    "recipe-card": "/components/recipe-card/index"
+  }
+}
