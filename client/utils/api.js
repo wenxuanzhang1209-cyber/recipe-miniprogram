@@ -4,6 +4,7 @@ const { get, post, put, del } = require('./request');
 module.exports = {
   // 认证
   wxLogin: (code, userInfo) => post('/auth/wx-login', { code, ...userInfo }),
+  logout: () => post('/auth/logout'),
 
   // 菜谱
   getRecipes: (params) => get('/recipes', params),

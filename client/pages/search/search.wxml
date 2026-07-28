@@ -49,9 +49,14 @@
       <text wx:elif="{{!hasMore}}">— 已经到底啦 —</text>
     </view>
 
-    <view class="empty-wrap" wx:if="{{!loading && !list.length}}">
-      <view class="empty-icon">🔍</view>
-      <view class="empty-text">没有找到相关菜谱，换个关键词试试吧</view>
+    <view class="empty-wrap" wx:if="{{!loading && noResult}}">
+      <view class="empty-icon">🍳</view>
+      <view class="empty-text">没有找到“{{keyword}}”相关的菜谱</view>
+      <view class="noresult-tip">试试这些热门做法：</view>
+      <view class="kw-list noresult-kw">
+        <view class="kw-chip hot" wx:for="{{hotKeywords}}" wx:key="*this"
+              bindtap="onTapSuggest" data-kw="{{item}}">{{item}}</view>
+      </view>
     </view>
   </block>
 </view>

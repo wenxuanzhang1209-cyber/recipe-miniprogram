@@ -8,7 +8,8 @@
     "pages/user/user",
     "pages/login/login",
     "pages/list/list",
-    "pages/preferences/preferences"
+    "pages/preferences/preferences",
+    "pages/cook/cook"
   ],
   "window": {
     "backgroundTextStyle": "light",

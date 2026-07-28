@@ -1,4 +1,5 @@
 <!-- pages/detail/detail.wxml - 菜谱详情页 -->
+<wxs src="../../utils/scale.wxs" module="sc" />
 <view class="page" wx:if="{{loading}}">
   <view class="skeleton hero-sk"></view>
   <view class="skeleton block-sk" wx:for="{{[1,2,3]}}" wx:key="*this"></view>
@@ -42,11 +43,37 @@
         <view class="stat-label">热量/份</view>
       </view>
     </view>
+
+    <!-- 做菜模式入口 -->
+    <view class="cookmode-entry" bindtap="goCookMode" wx:if="{{recipe.steps.length}}">
+      <view class="cookmode-left">
+        <view class="cookmode-icon">👨‍🍳</view>
+        <view class="cookmode-text">
+          <view class="cookmode-title">开始做菜</view>
+          <view class="cookmode-sub">分步引导 · 大字模式 · 计时提醒</view>
+        </view>
+      </view>
+      <view class="cookmode-arrow">›</view>
+    </view>
   </view>
 
-  <!-- 食材清单（可勾选备菜） -->
+  <!-- 过敏原提醒 -->
+  <view class="allergen-card" wx:if="{{allergenWarnings.length}}">
+    <view class="allergen-title">⚠️ 过敏原提醒</view>
+    <view class="allergen-item" wx:for="{{allergenWarnings}}" wx:key="*this">{{item}}</view>
+    <view class="allergen-tip">该菜谱含有你设置的过敏原，请谨慎食用</view>
+  </view>
+
+  <!-- 食材清单（可勾选备菜 + 人数换算） -->
   <view class="card section-card fade-in">
-    <view class="sec-title">🥬 食材清单 <text class="sec-hint">点击打勾备菜</text></view>
+    <view class="sec-title-row">
+      <view class="sec-title">🥬 食材清单 <text class="sec-hint">点击打勾备菜</text></view>
+      <view class="servings-stepper">
+        <view class="st-btn {{currentServings <= 1 ? 'disabled' : ''}}" bindtap="onServingsTap" data-delta="-1">−</view>
+        <view class="st-val">{{currentServings}}人</view>
+        <view class="st-btn {{currentServings >= 12 ? 'disabled' : ''}}" bindtap="onServingsTap" data-delta="1">＋</view>
+      </view>
+    </view>
     <view class="ing-group" wx:if="{{mainIngredients.length}}">
       <view class="ing-group-name">主料</view>
       <view class="ing-row {{checkedMap[item.name] ? 'checked' : ''}}"
@@ -54,7 +81,7 @@
             bindtap="toggleCheck" data-name="{{item.name}}">
         <view class="ing-check">{{checkedMap[item.name] ? '✓' : ''}}</view>
         <view class="ing-name">{{item.name}}</view>
-        <view class="ing-amount">{{item.amount}}{{item.unit}}</view>
+        <view class="ing-amount">{{sc.scale(item.amount, servingsRatio)}}</view>
       </view>
     </view>
     <view class="ing-group" wx:if="{{subIngredients.length}}">
@@ -64,7 +91,7 @@
             bindtap="toggleCheck" data-name="{{item.name}}">
         <view class="ing-check">{{checkedMap[item.name] ? '✓' : ''}}</view>
         <view class="ing-name">{{item.name}}</view>
-        <view class="ing-amount">{{item.amount}}{{item.unit}}</view>
+        <view class="ing-amount">{{sc.scale(item.amount, servingsRatio)}}</view>
       </view>
     </view>
   </view>

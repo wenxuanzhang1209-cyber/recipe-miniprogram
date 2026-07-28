@@ -1,7 +1,7 @@
 const { Op, literal } = require('sequelize');
 const {
   sequelize, Recipe, Ingredient, RecipeIngredient, RecipeStep,
-  Category, Tag, NutritionalInfo, Favorite, BrowseHistory
+  Category, Tag, NutritionalInfo, Favorite, BrowseHistory, User
 } = require('../models');
 const cache = require('../utils/cache');
 const config = require('../config');
@@ -171,52 +171,173 @@ const getPopularRecipes = async (limit = 10) => {
 };
 
 /**
- * 推荐菜谱：登录用户按偏好菜系推荐，未登录随机热门
+ * 推荐菜谱：真实个性化推荐
+ * 优先级：显式偏好 > 浏览历史推断 > 随机热门
+ * 硬性排除：忌口食材、过敏原、荤素偏好冲突
+ * 每条结果附带推荐理由
  */
 const getRecommendedRecipes = async (userId = null, limit = 10) => {
   const n = clampLimit(limit);
 
-  if (userId) {
-    // 基于用户最近浏览的菜系偏好
-    const recent = await BrowseHistory.findAll({
+  // 未登录：随机热门池
+  if (!userId) {
+    return cache.wrap(`recommend:default:${n}`, config.cache.popularTTL, async () => {
+      return Recipe.findAll({
+        attributes: LIST_ATTRIBUTES,
+        order: sequelize.random(),
+        where: { view_count: { [Op.gte]: 0 } },
+        limit: n
+      });
+    });
+  }
+
+  // 加载用户偏好 + 最近浏览
+  const [user, recent] = await Promise.all([
+    User.findByPk(userId, { attributes: ['preferences'] }),
+    BrowseHistory.findAll({
       where: { user_id: userId },
       include: [{ model: Recipe, as: 'recipe', attributes: ['cuisine_type'] }],
       order: [['viewed_at', 'DESC']],
       limit: 20
-    });
+    })
+  ]);
+
+  const prefs = (user && user.preferences) || {};
+
+  // 1. 菜系偏好：显式设置优先，否则从浏览历史推断
+  let topCuisines = Array.isArray(prefs.cuisines) ? prefs.cuisines.slice(0, 5) : [];
+  let cuisineFromHistory = false;
+  if (!topCuisines.length) {
     const cuisineCount = {};
     recent.forEach((h) => {
-      const c = h.recipe?.cuisine_type;
+      const c = h.recipe && h.recipe.cuisine_type;
       if (c) cuisineCount[c] = (cuisineCount[c] || 0) + 1;
     });
-    const topCuisines = Object.entries(cuisineCount)
+    topCuisines = Object.entries(cuisineCount)
       .sort((a, b) => b[1] - a[1])
       .slice(0, 3)
       .map(([c]) => c);
-
-    if (topCuisines.length) {
-      const viewedIds = recent.map((h) => h.recipe_id);
-      return Recipe.findAll({
-        where: {
-          cuisine_type: { [Op.in]: topCuisines },
-          id: { [Op.notIn]: viewedIds.length ? viewedIds : [0] }
-        },
-        attributes: LIST_ATTRIBUTES,
-        order: [['favorite_count', 'DESC']],
-        limit: n
-      });
-    }
+    cuisineFromHistory = topCuisines.length > 0;
   }
 
-  // 默认：随机取热门池
-  return cache.wrap(`recommend:default:${n}`, config.cache.popularTTL, async () => {
-    return Recipe.findAll({
+  // 2. 硬性排除：忌口食材 + 过敏原
+  const avoidList = [
+    ...new Set([
+      ...(Array.isArray(prefs.avoidIngredients) ? prefs.avoidIngredients : []),
+      ...(Array.isArray(prefs.allergens) ? prefs.allergens : [])
+    ])
+  ];
+  const excludedIdSet = new Set();
+  if (avoidList.length) {
+    const matches = await RecipeIngredient.findAll({
+      attributes: ['recipe_id'],
+      include: [{
+        model: Ingredient, as: 'ingredient', attributes: [],
+        where: { name: { [Op.in]: avoidList } },
+        required: true
+      }],
+      raw: true
+    });
+    matches.forEach((m) => excludedIdSet.add(m.recipe_id));
+  }
+
+  // 荤素偏好：素食/纯素排除含肉类、海鲜食材的菜谱
+  if (prefs.dietType === 'vegetarian' || prefs.dietType === 'vegan') {
+    const meatCats = prefs.dietType === 'vegan' ? ['肉类', '海鲜', '蛋奶'] : ['肉类', '海鲜'];
+    const meatMatches = await RecipeIngredient.findAll({
+      attributes: ['recipe_id'],
+      include: [{
+        model: Ingredient, as: 'ingredient', attributes: [],
+        where: { category: { [Op.in]: meatCats } },
+        required: true
+      }],
+      raw: true
+    });
+    meatMatches.forEach((m) => excludedIdSet.add(m.recipe_id));
+  }
+
+  // 排除已浏览过的
+  recent.forEach((h) => excludedIdSet.add(h.recipe_id));
+
+  // 3. 构建查询条件
+  const where = {};
+  if (excludedIdSet.size) where.id = { [Op.notIn]: [...excludedIdSet] };
+  if (prefs.difficulties && prefs.difficulties.length) {
+    where.difficulty = { [Op.in]: prefs.difficulties.map((d) => parseInt(d, 10)) };
+  }
+  const andConditions = [];
+  if (prefs.maxCookTime) {
+    andConditions.push(literal(`(prep_time + cook_time) <= ${parseInt(prefs.maxCookTime, 10)}`));
+  }
+  if (andConditions.length) where[Op.and] = andConditions;
+
+  // 4. 排序策略（根据饮食目标）
+  let order = [['favorite_count', 'DESC'], ['view_count', 'DESC']];
+  if (prefs.dietGoal === 'lowfat') order = [['calories', 'ASC'], ['favorite_count', 'DESC']];
+  else if (prefs.dietGoal === 'quick') order = [[literal('(prep_time + cook_time)'), 'ASC'], ['favorite_count', 'DESC']];
+  else if (prefs.dietGoal === 'highprotein') order = [['calories', 'DESC'], ['favorite_count', 'DESC']];
+
+  // 5. 先查偏好菜系，不足时放宽回填
+  let recipes = [];
+  if (topCuisines.length) {
+    recipes = await Recipe.findAll({
       attributes: LIST_ATTRIBUTES,
-      order: sequelize.random(),
-      where: { view_count: { [Op.gte]: 0 } },
+      where: { ...where, cuisine_type: { [Op.in]: topCuisines } },
+      order,
       limit: n
     });
+  }
+  if (recipes.length < n) {
+    const existingIds = new Set(recipes.map((r) => r.id));
+    const fallbackWhere = { ...where };
+    const notIn = [...excludedIdSet, ...existingIds];
+    fallbackWhere.id = { [Op.notIn]: notIn };
+    const more = await Recipe.findAll({
+      attributes: LIST_ATTRIBUTES,
+      where: fallbackWhere,
+      order: [['favorite_count', 'DESC'], ['view_count', 'DESC']],
+      limit: n - recipes.length
+    });
+    recipes = recipes.concat(more);
+  }
+
+  // 6. 生成推荐理由
+  return recipes.map((r) => {
+    const json = r.toJSON();
+    json.recommend_reason = buildRecommendReason(json, prefs, topCuisines, cuisineFromHistory);
+    return json;
   });
+};
+
+/**
+ * 推荐理由生成器 — 简短、真实、基于实际匹配条件
+ */
+const buildRecommendReason = (recipe, prefs, topCuisines, fromHistory) => {
+  const reasons = [];
+  if (topCuisines.includes(recipe.cuisine_type)) {
+    reasons.push(fromHistory
+      ? `你最近常看${recipe.cuisine_type}`
+      : `符合你喜欢的${recipe.cuisine_type}口味`);
+  }
+  const totalTime = (recipe.prep_time || 0) + (recipe.cook_time || 0);
+  if (prefs.dietGoal === 'quick' && totalTime <= 30) {
+    reasons.push(`${totalTime}分钟内可完成`);
+  } else if (totalTime <= 20) {
+    reasons.push(`快手菜，仅需${totalTime}分钟`);
+  }
+  if (prefs.dietGoal === 'lowfat' && recipe.calories && recipe.calories <= 200) {
+    reasons.push(`每份仅${recipe.calories}千卡`);
+  }
+  if (recipe.difficulty <= 2 && (prefs.difficulties || []).length) {
+    reasons.push('简单易上手');
+  }
+  if (prefs.spiceLevel === 'none' && recipe.taste && !recipe.taste.includes('辣')) {
+    reasons.push('不辣，符合你的口味');
+  }
+  if (!reasons.length && recipe.favorite_count >= 300) {
+    reasons.push(`${recipe.favorite_count}人收藏`);
+  }
+  return reasons[0] || '根据你的口味推荐';
 };
 
 /**

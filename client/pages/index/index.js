@@ -14,6 +14,14 @@ Page({
     this.fetchAll();
   },
 
+  onShow() {
+    // 偏好设置变更后刷新推荐
+    if (this._prefsDirty) {
+      this._prefsDirty = false;
+      this.fetchAll();
+    }
+  },
+
   onPullDownRefresh() {
     this.fetchAll().finally(() => wx.stopPullDownRefresh());
   },

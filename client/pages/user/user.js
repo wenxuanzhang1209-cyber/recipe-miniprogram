@@ -115,12 +115,15 @@ Page({
     wx.showModal({
       title: '退出登录',
       content: '确定要退出当前账号吗？',
-      success: (res) => {
+      success: async (res) => {
         if (res.confirm) {
+          // 调用后端登出接口（埋点/审计，失败不阻塞本地登出）
+          try { await api.logout(); } catch (e) { /* 静默 */ }
           getApp().clearLogin();
           this.setData({
             isLoggedIn: false,
             profile: null,
+            joinDaysText: '',
             favorites: [],
             history: []
           });

@@ -1,0 +1,24 @@
+/* utils/scale.wxs - 食材用量换算（WXS 可在 WXML 模板中直接调用）
+ * 数值型用量按比例缩放，非数值型（适量/少许）原样保留
+ */
+function scale(amount, ratio) {
+  if (!amount) return '';
+  if (!ratio || ratio === 1) return amount;
+  var m = ('' + amount).match(/^(\d+(?:\.\d+)?)([\s\S]*)$/);
+  if (!m) return amount;
+  var num = parseFloat(m[1]);
+  var suffix = m[2] || '';
+  if (num !== num) return amount; // NaN 检查
+  var scaled = num * ratio;
+  var out;
+  if (scaled >= 10) {
+    out = Math.round(scaled);
+  } else if (scaled >= 1) {
+    out = Math.round(scaled * 10) / 10;
+  } else {
+    out = Math.round(scaled * 100) / 100;
+  }
+  return out + suffix;
+}
+
+module.exports = { scale: scale };

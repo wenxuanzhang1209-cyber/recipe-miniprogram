@@ -16,6 +16,7 @@
   </view>
   <view class="rc-body">
     <view class="rc-name ellipsis">{{recipe.name}}</view>
+    <view class="rc-reason" wx:if="{{recipe.recommend_reason}}">✨ {{recipe.recommend_reason}}</view>
     <view class="rc-desc ellipsis-2" wx:if="{{mode === 'list' && recipe.description}}">{{recipe.description}}</view>
     <view class="rc-meta">
       <text class="badge">{{recipe.cuisine_type}}</text>

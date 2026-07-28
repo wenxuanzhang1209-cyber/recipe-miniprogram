@@ -68,3 +68,15 @@
   color: var(--text-light);
   font-size: 24rpx;
 }
+
+/* 无结果状态 */
+.noresult-tip {
+  margin-top: 32rpx;
+  font-size: 24rpx;
+  color: var(--text-sub);
+}
+.noresult-kw {
+  margin-top: 16rpx;
+  justify-content: center;
+  max-width: 600rpx;
+}

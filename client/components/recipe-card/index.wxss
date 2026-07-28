@@ -53,6 +53,20 @@
   color: var(--text-main, #2D3436);
 }
 
+.rc-reason {
+  margin-top: 6rpx;
+  font-size: 22rpx;
+  color: var(--primary, #FF6B35);
+  background: var(--primary-bg, #FFF1EB);
+  border-radius: 8rpx;
+  padding: 4rpx 12rpx;
+  display: inline-block;
+  max-width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
 .rc-desc {
   margin-top: 6rpx;
   font-size: 24rpx;

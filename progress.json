@@ -1,20 +1,25 @@
 {
   "project": "recipe-miniprogram",
   "taskType": "24h-deep-development",
-  "lastUpdated": "2026-07-28T15:50:00+08:00",
-  "currentBatch": 1,
+  "lastUpdated": "2026-07-28T16:10:00+08:00",
+  "currentBatch": 2,
   "batchStatus": "complete",
-  "gitCommit": "pending-batch1",
+  "gitCommit": "pending-batch2",
   "completedModules": [
     "env-fix: npm依赖安装(路径空格问题通过/tmp编译绕过)",
     "tabbar-icons: 8个TabBar PNG图标+logo+默认头像+空状态插画+分享卡片图(纯Node生成)",
     "preferences-page: 用户偏好设置页面(菜系/辣度/忌口/目标/荤素/过敏原/难度/时长/厨具/人数)+API接入",
     "join-days: 注册天数真实计算(边界:当天/无效时间/空值)",
-    "design-system: styles/tokens.wxss + styles/base.wxss 拆分, app.wxss改为@import入口"
+    "design-system: styles/tokens.wxss + styles/base.wxss 拆分, app.wxss改为@import入口",
+    "recommend-personalized: 推荐系统真实个性化(忌口/过敏原/荤素排除+菜系/难度/时长约束+推荐理由)",
+    "search-enhance: 搜索防抖400ms+过期请求丢弃+无结果热门词建议",
+    "detail-enhance: 人数换算(WXS干净数字)+过敏原提示+收藏防重复点击",
+    "cook-mode: 做菜模式页(大字步骤/屏幕常亮/计时器/食材浮层/完成反馈)",
+    "logout-api: 退出登录调用后端审计接口+api.js补logout"
   ],
-  "testCount": 41,
-  "testStatus": "41/41 passed",
-  "coverage": "81.27% statements",
+  "testCount": 49,
+  "testStatus": "49/49 passed",
+  "coverage": "~82% statements",
   "lastCommands": [
     "cd server && DB_DIALECT=sqlite npx jest --forceExit",
     "cd client && node scripts/generate-icons.js"
@@ -33,6 +38,6 @@
     "JWT_SECRET为开发弱密钥(生产需替换)",
     "菜谱图片为picsum.photos随机占位图(Batch3处理)"
   ],
-  "nextTask": "Batch2: 业务链路审计 — 逐项核验19个API前后端一致性",
-  "nextCommand": "cd server && DB_DIALECT=sqlite node -e \"require('./src/models').sequelize.authenticate().then(()=>console.log('DB OK'))\""
+  "nextTask": "Batch3: 数据质量审计脚本+图片策略+后端性能安全加固",
+  "nextCommand": "cd server && DB_DIALECT=sqlite npx jest --forceExit"
 }
