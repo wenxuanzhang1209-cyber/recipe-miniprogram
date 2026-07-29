@@ -63,6 +63,15 @@ describe('推荐与偏好联动', () => {
     expect(names).not.toContain('测试菜谱1');
   });
 
+  it('分类型过敏原：设置"肉类"排除含肉类食材的菜谱（回归测试）', async () => {
+    // 修复前：过敏原只匹配食材名称，"肉类"(分类)无法排除含猪五花肉(肉类)的菜谱
+    // 修复后：过敏原同时匹配名称和分类
+    await setPrefs({ avoidIngredients: [], allergens: ['肉类'] });
+    const list = await getRecommend(30);
+    const names = list.map((r) => r.name);
+    expect(names).not.toContain('测试菜谱1'); // 含猪五花肉(肉类)
+  });
+
   it('素食偏好：含肉类食材的菜谱被排除', async () => {
     await setPrefs({ dietType: 'vegetarian', allergens: [] });
     const list = await getRecommend(30);

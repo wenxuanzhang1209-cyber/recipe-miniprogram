@@ -229,11 +229,19 @@ const getRecommendedRecipes = async (userId = null, limit = 10) => {
   ];
   const excludedIdSet = new Set();
   if (avoidList.length) {
+    // 同时匹配食材名称和分类：
+    //  - 具体食材名（如"花生""香菜"）按名称精确匹配
+    //  - 分类型过敏原（如"海鲜""蛋奶"）按分类匹配，排除该分类下所有食材
     const matches = await RecipeIngredient.findAll({
       attributes: ['recipe_id'],
       include: [{
         model: Ingredient, as: 'ingredient', attributes: [],
-        where: { name: { [Op.in]: avoidList } },
+        where: {
+          [Op.or]: [
+            { name: { [Op.in]: avoidList } },
+            { category: { [Op.in]: avoidList } }
+          ]
+        },
         required: true
       }],
       raw: true
