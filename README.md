@@ -6,6 +6,8 @@
 
 # 家常菜谱微信小程序
 
+> **English overview** · A WeChat mini-program with 10,000+ home-style recipes: multi-field search, cuisine tabs, difficulty/duration filters, smart recommendations, and a MySQL + Redis + Express backend orchestrated by docker-compose.
+
 一个功能完整的做菜教材/菜谱微信小程序，内置 **10,000+ 道家常菜** 数据。
 
 ## 项目结构
