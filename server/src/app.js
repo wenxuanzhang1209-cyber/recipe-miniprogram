@@ -40,6 +40,11 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: Date.now() });
 });
 
+// ---------- 根路径引导（浏览器直接访问时跳转到 API 文档） ----------
+app.get('/', (req, res) => {
+  res.redirect('/api-docs');
+});
+
 // ---------- Swagger API 文档 ----------
 const swaggerUi = require('swagger-ui-express');
 const openapiSpec = require('./config/openapi');
