@@ -1,3 +1,9 @@
+<p align="left">
+  <img src="https://github.com/wenxuanzhang1209-cyber/recipe-miniprogram/actions/workflows/ci.yml/badge.svg" />
+  <img src="https://img.shields.io/github/license/wenxuanzhang1209-cyber/recipe-miniprogram" />
+  <img src="https://img.shields.io/github/v/release/wenxuanzhang1209-cyber/recipe-miniprogram?label=release" />
+</p>
+
 # 家常菜谱微信小程序
 
 一个功能完整的做菜教材/菜谱微信小程序，内置 **10,000+ 道家常菜** 数据。
