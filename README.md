@@ -1,99 +1,117 @@
-<p align="left">
-  <img src="https://github.com/wenxuanzhang1209-cyber/recipe-miniprogram/actions/workflows/ci.yml/badge.svg" />
-  <img src="https://img.shields.io/github/license/wenxuanzhang1209-cyber/recipe-miniprogram" />
-  <img src="https://img.shields.io/github/v/release/wenxuanzhang1209-cyber/recipe-miniprogram?label=release" />
+<p align="center">
+  <a href="https://github.com/wenxuanzhang1209-cyber/recipe-miniprogram/actions/workflows/ci.yml"><img src="https://github.com/wenxuanzhang1209-cyber/recipe-miniprogram/actions/workflows/ci.yml/badge.svg" alt="CI" /></a>
+  <img src="https://img.shields.io/github/license/wenxuanzhang1209-cyber/recipe-miniprogram?style=flat-square" alt="License" />
+  <img src="https://img.shields.io/badge/recipes-10%2C000-58a6ff?style=flat-square" alt="Recipes" />
+  <img src="https://img.shields.io/badge/data-audited-3fb950?style=flat-square" alt="Audited" />
 </p>
 
-# 家常菜谱微信小程序
+# Recipe Mini Program
 
-> **English overview** · A WeChat mini-program with 10,000+ home-style recipes: multi-field search, cuisine tabs, difficulty/duration filters, smart recommendations, and a MySQL + Redis + Express backend orchestrated by docker-compose.
+**A WeChat mini-program with 10,000 home-style Chinese recipes — and a data audit that says exactly what is wrong with them.**
 
-一个功能完整的做菜教材/菜谱微信小程序，内置 **10,000+ 道家常菜** 数据。
+<sub>内置 10,000 道家常菜的微信小程序，附带一份说清楚数据哪里有问题的质检报告。</sub>
 
-## 项目结构
+---
+
+## Why this exists
+
+Recipe apps are easy to start and hard to finish. The interesting work is not the list view —
+it is having **enough real data that search, filtering, and recommendations behave like they
+would in production**, and knowing where that data is weak.
+
+A 200-recipe demo hides every problem. At 10,000 recipes, pagination, full-text search,
+category joins, and cold-start recommendation all have to actually work.
+
+<sub>菜谱应用容易开头、难在收尾。有意思的部分不是列表页，而是**有足够真实的数据量，
+让搜索、筛选和推荐表现得像线上一样**，并且清楚数据哪里弱。200 条的 demo 掩盖一切问题；
+到 10,000 条，分页、全文搜索、分类关联和冷启动推荐就都得真的能用。</sub>
+
+## What's in the data
+
+Measured from `server/data/recipe.sqlite`:
+
+| Table | Rows |
+|---|---|
+| `recipes` | 10,000 |
+| `recipe_ingredients` | 96,908 |
+| `recipe_steps` | 66,609 |
+| `recipe_categories` | 40,000 |
+| `recipe_tags` | 29,971 |
+| `nutritional_info` | 10,000 |
+| `ingredients` | 135 |
+
+## The data audit, including what it fails
+
+`server/data/quality-report.json` grades every recipe. The structured content is clean:
+
+| Check | Failures |
+|---|---|
+| Duplicate names | 0 |
+| Empty fields | 0 |
+| Missing steps | 0 |
+| Step order errors | 0 |
+| Duplicate ingredients | 0 |
+| Abnormal amounts / times / difficulty | 0 |
+| Overlong fields | 0 |
+| HTML injected into content | 0 |
+
+**And one thing it fails, on all 10,000 recipes:** the images are `picsum.photos` placeholders
+that do not match the dish. This is a known, global gap awaiting a real image strategy — it is
+recorded in the audit rather than quietly left for someone to discover.
+
+That is the point of shipping the audit alongside the data. A quality report that only lists
+passes is marketing; one that names its own biggest defect is a status report you can act on.
+
+<sub>质检报告对每一道菜打分。结构化内容是干净的（重名、空字段、缺步骤、步骤乱序、
+配料重复、异常用量/时间/难度、超长字段、HTML 注入——全部为 0）。
+**而它有一处失败，覆盖全部 10,000 道**：图片是 picsum.photos 随机占位图，与菜名不匹配。
+这是个已知的全局缺口，写在报告里而不是留给别人去踩。只列通过项的质量报告是宣传，
+点名自己最大缺陷的才是能拿来干活的状态报告。</sub>
+
+## Architecture
 
 ```
-recipe-miniprogram/
-├── client/              # 微信小程序（原生开发）
-├── server/              # Node.js + Express 后端 API
-├── docker-compose.yml   # MySQL + Redis + Server 一键编排
-└── docs/                # 文档（API / 数据库 / 部署 / 用户手册）
+client/   WeChat mini-program
+server/   Node.js + Express + SQLite
+  data/       recipe.sqlite, quality & performance reports
+  tests/      integration tests (auth, recipes, search)
+  scripts/    perf-test.js, uat-test.js, data generation
+docs/     API reference and deployment notes
+deploy/   deployment scripts
 ```
 
-## 功能清单
-
-### 小程序端
-- **首页**：搜索栏、热门轮播、菜系快捷入口、今日推荐、热门榜单
-- **菜谱浏览**：网格/列表视图切换、菜系 Tab、5 种排序、筛选抽屉（难度/时长）、无限滚动分页
-- **搜索**：菜名/描述/食材多维搜索、搜索历史、热门关键词
-- **菜谱详情**：大图、可勾选食材备菜清单、时间轴式分步做法、小贴士、营养成分卡、猜你喜欢、收藏与分享
-- **分类页**：菜系/口味/做法/餐次 四维分类导航
-- **用户中心**：微信一键登录、收藏列表、浏览历史、退出登录
-- **体验优化**：骨架屏、下拉刷新、淡入动画、懒加载图片
-
-### 后端
-- RESTful API（Express + Sequelize + MySQL + Redis）
-- 微信授权登录（code2session）+ JWT 鉴权
-- 菜谱 CRUD、多条件筛选、全文搜索（菜名/描述/食材反查）
-- 分类树、个性化推荐（基于浏览偏好）、相关推荐
-- 收藏、浏览历史、用户偏好设置
-- Redis 缓存热点数据（带优雅降级，Redis 不可用时自动穿透）
-- 限流、Helmet 安全头、统一错误处理
-
-## 快速开始
-
-### 方式一：Docker（推荐，含 MySQL + Redis）
-
-```bash
-cd recipe-miniprogram
-docker compose up -d
-# 生成 10000 道菜谱数据
-docker compose exec server node scripts/generate-recipes.js 10000
-```
-
-### 方式二：本地开发（无需 MySQL，使用 SQLite）
+## Quick start
 
 ```bash
 cd server
 npm install
-# 生成数据（首次）
-DB_DIALECT=sqlite node scripts/generate-recipes.js 10000
-# 启动服务
-DB_DIALECT=sqlite npm run dev
+npm run dev          # API on http://localhost:3000
+npm test             # integration tests
 ```
 
-服务默认运行在 `http://localhost:3000`，健康检查：`GET /health`。
+Open `client/` in WeChat DevTools and point it at the local API.
 
-### 小程序端
+See [`docs/API.md`](docs/API.md) for endpoints.
 
-1. 用微信开发者工具打开 `client/` 目录
-2. 修改 `client/app.js` 中的 `baseUrl` 为你的后端地址
-3. 开发阶段在工具中勾选「不校验合法域名」
-4. 上线前将 `project.config.json` 中 `appid` 替换为你的小程序 AppID
+## Status
 
-## 测试
+Working full-stack application with CI, integration tests, and performance and quality reports
+checked into the repository. The image gap above is the main known defect.
 
-```bash
-cd server
-npm test    # 41 个集成测试（Jest + Supertest，SQLite 内存库）
-```
+<sub>可运行的全栈应用，有 CI、集成测试，性能与质检报告都在仓库里。
+上面那个图片问题是主要的已知缺陷。</sub>
 
-## 文档
+## License
 
-- [API 接口文档](docs/API.md)
-- [数据库设计文档](docs/DATABASE.md)
-- [部署指南](docs/DEPLOYMENT.md)
-- [用户使用手册](docs/USER_MANUAL.md)
+[MIT](LICENSE) © 2026 JKinco
 
-## 技术栈
+---
 
-| 层 | 技术 |
-|----|------|
-| 小程序 | 微信原生（WXML/WXSS/JS） |
-| 后端 | Node.js 20 + Express 4 |
-| ORM | Sequelize 6 |
-| 数据库 | MySQL 8.0（生产）/ SQLite（开发测试） |
-| 缓存 | Redis 7（ioredis） |
-| 认证 | JWT + 微信 code2session |
-| 测试 | Jest + Supertest |
-| 部署 | Docker Compose + Nginx |
+<sub>
+<b>JKinco</b> — local-first tools for work whose data cannot leave the building ·
+<a href="https://github.com/wenxuanzhang1209-cyber/jkinco-listen-open">Listen</a> ·
+<a href="https://github.com/wenxuanzhang1209-cyber/jkinco-slides">Slides</a> ·
+<a href="https://github.com/wenxuanzhang1209-cyber/JKinco-Skills-Lab">Skills Lab</a> ·
+<a href="https://github.com/wenxuanzhang1209-cyber/personal-life-hub">Life Hub</a> ·
+<a href="https://github.com/wenxuanzhang1209-cyber/jkinco-tools">Tools</a>
+</sub>

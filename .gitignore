@@ -6,3 +6,8 @@ coverage/
 uploads/
 *.log
 .DS_Store
+
+# SQLite 的临时备份。这两个文件曾被提交进来（各 34MB，内容与主库完全相同），
+# 是迁移/恢复脚本留下的中间产物。仓库里留着它们等于把同一份数据存三遍。
+server/data/*.sqlite.bak-*
+server/data/*.sqlite.pre-restore-*
