@@ -6,12 +6,77 @@ on:
   pull_request:
 
 jobs:
-  server-syntax:
+  # 这里原先只有一步 `node --check src/app.js` —— 一次语法检查。
+  # 而 README 顶上挂着 CI 徽章和「tests-63 passing」，两件事放在一起，
+  # 读者会得出一个合理但错误的结论：这 63 个集成测试是 CI 在管的。
+  #
+  # 实际上没有任何东西在跑它们。语法检查连 require 都不会执行。
+  syntax:
+    name: Syntax
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - run: cd server && npm ci
-      - run: cd server && node --check src/app.js
+          cache: npm
+          cache-dependency-path: server/package-lock.json
+      - run: npm ci
+        working-directory: server
+      - run: node --check src/app.js
+        working-directory: server
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: server/package-lock.json
+      - run: npm ci
+        working-directory: server
+
+      # 测试自带 SQLite 内存库（tests/helpers.js 里设 DB_DIALECT/DB_STORAGE），
+      # 所以不需要起 MySQL。
+      - name: Run tests
+        working-directory: server
+        env:
+          NO_COLOR: "1"
+        run: |
+          set -o pipefail
+          npm test 2>&1 | tee /tmp/test-output.txt
+
+      # README 的徽章写着一个具体数字。数字会过期，而过期的徽章不会报错 ——
+      # 它只是安静地说着一件不再为真的事，直到有人真的 clone 下来数了一遍。
+      - name: Badge count matches reality
+        run: |
+          # 不用 set -e：grep 没匹配到会返回 1，脚本会在打印任何诊断之前
+          # 就退出，只留下一个「exit code 1」让人猜。
+          set -uo pipefail
+
+          clean=$(sed -E $'s/\x1b\\[[0-9;]*[A-Za-z]//g' /tmp/test-output.txt)
+          total=$(printf '%s\n' "$clean" \
+                  | grep -oE '^Tests:.*[0-9]+ total' \
+                  | grep -oE '[0-9]+ total' | grep -oE '[0-9]+' | tail -1)
+          claimed=$(grep -oE 'badge/tests-[0-9]+%20passing' README.md \
+                    | grep -oE '[0-9]+' | head -1)
+
+          echo "README 徽章: ${claimed:-未找到}   实际跑过: ${total:-0}"
+
+          if [ -z "${total:-}" ] || [ "$total" -eq 0 ]; then
+            echo "::error::没能从 jest 输出里数出测试数。reporter 换了？"
+            tail -30 /tmp/test-output.txt
+            exit 1
+          fi
+          if [ -z "${claimed:-}" ]; then
+            echo "::warning::README 里没有测试数徽章，跳过核对"
+            exit 0
+          fi
+          if [ "$claimed" != "$total" ]; then
+            echo "::error::README 徽章写着 $claimed 个测试，实际跑了 $total 个。更新 README.md。"
+            exit 1
+          fi
+          echo "一致。"

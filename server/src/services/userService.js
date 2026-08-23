@@ -59,13 +59,33 @@ const addFavorite = async (userId, recipeId) => {
     err.status = 404;
     throw err;
   }
-  const [fav, created] = await Favorite.findOrCreate({
+  // 这里刻意不用 findOrCreate。Sequelize 会为它隐式开一个事务，而 SQLite
+  // 只有一条连接：并发调用时直接报 "cannot start a transaction within a
+  // transaction"，随后 Sequelize 把那条连接杀掉，后续请求就开始出现莫名其妙
+  // 的失败（测试里表现为偶发的 404）。
+  //
+  // 而这里本来就不需要事务 —— 唯一性由 favorites 表上 (user_id, recipe_id)
+  // 的唯一索引保证。让数据库做它本来就在做的事，冲突时按「已收藏」处理。
+  const existing = await Favorite.findOne({
     where: { user_id: userId, recipe_id: recipeId }
   });
-  if (created) {
-    await Recipe.increment('favorite_count', { where: { id: recipeId } });
+  if (existing) {
+    return existing;
   }
-  return fav;
+
+  try {
+    const fav = await Favorite.create({ user_id: userId, recipe_id: recipeId });
+    await Recipe.increment('favorite_count', { where: { id: recipeId } });
+    return fav;
+  } catch (err) {
+    if (err.name !== 'SequelizeUniqueConstraintError') {
+      throw err;
+    }
+    // 并发下另一个请求先插进去了。这正是唯一索引该拦下的情况，不是错误。
+    return Favorite.findOne({
+      where: { user_id: userId, recipe_id: recipeId }
+    });
+  }
 };
 
 /**
