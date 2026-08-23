@@ -29,7 +29,8 @@ category joins, and cold-start recommendation all have to actually work.
 
 ## What's in the data
 
-Measured from `server/data/recipe.sqlite`:
+Measured from the bundled SQLite copy (`server/data/recipe.sqlite` — set `DB_DIALECT=sqlite`
+to run against it without a MySQL server):
 
 | Table | Rows |
 |---|---|
@@ -73,7 +74,7 @@ passes is marketing; one that names its own biggest defect is a status report yo
 
 ```
 client/   WeChat mini-program
-server/   Node.js + Express + SQLite
+server/   Node.js + Express + Sequelize (MySQL by default, SQLite for local runs)
   data/       recipe.sqlite, quality & performance reports
   tests/      integration tests (auth, recipes, search)
   scripts/    perf-test.js, uat-test.js, data generation
@@ -86,13 +87,21 @@ deploy/   deployment scripts
 ```bash
 cd server
 npm install
-npm run dev          # API on http://localhost:3000
-npm test             # 63 integration tests
+npm test                                    # 63 integration tests
+
+# Run against the bundled SQLite copy — no MySQL server needed
+DB_DIALECT=sqlite npm run dev               # API on http://localhost:3000
+curl 'http://localhost:3000/api/v1/recipes?limit=2'
 ```
 
-Open `client/` in WeChat DevTools and point it at the local API.
+`DB_DIALECT=sqlite` matters: the default dialect is MySQL, so a plain `npm run dev` fails with
+a connection error unless you have a MySQL server configured. The repository ships a populated
+SQLite copy so the API works immediately without one.
 
-See [`docs/API.md`](docs/API.md) for endpoints.
+Interactive API docs at <http://localhost:3000/api-docs> (Swagger UI); the written reference is
+[`docs/API.md`](docs/API.md).
+
+Open `client/` in WeChat DevTools and point it at the local API.
 
 ## Status
 
