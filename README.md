@@ -3,6 +3,7 @@
   <img src="https://img.shields.io/github/license/wenxuanzhang1209-cyber/recipe-miniprogram?style=flat-square" alt="License" />
   <img src="https://img.shields.io/badge/recipes-10%2C000-58a6ff?style=flat-square" alt="Recipes" />
   <img src="https://img.shields.io/badge/data-audited-3fb950?style=flat-square" alt="Audited" />
+  <img src="https://img.shields.io/badge/tests-63%20passing-3fb950?style=flat-square" alt="Tests" />
 </p>
 
 # Recipe Mini Program
@@ -86,7 +87,7 @@ deploy/   deployment scripts
 cd server
 npm install
 npm run dev          # API on http://localhost:3000
-npm test             # integration tests
+npm test             # 63 integration tests
 ```
 
 Open `client/` in WeChat DevTools and point it at the local API.
@@ -95,8 +96,8 @@ See [`docs/API.md`](docs/API.md) for endpoints.
 
 ## Status
 
-Working full-stack application with CI, integration tests, and performance and quality reports
-checked into the repository. The image gap above is the main known defect.
+Working full-stack application with CI, 63 passing integration tests, and performance and
+quality reports checked into the repository. The image gap above is the main known defect.
 
 <sub>可运行的全栈应用，有 CI、集成测试，性能与质检报告都在仓库里。
 上面那个图片问题是主要的已知缺陷。</sub>
